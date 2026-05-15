@@ -497,6 +497,22 @@
   display: block;
 }
 
+/* ── Trust Bar Mobile (≤640px) ────────────────────────────── */
+@media (max-width: 640px) {
+  .trust-bar {
+    padding-block: var(--space-8) var(--space-2);
+  }
+  .trust-bar__number {
+    font-size: clamp(var(--text-2xl), 6vw, var(--text-4xl));
+  }
+  .trust-bar__label {
+    font-size: var(--text-xs);
+  }
+  .trust-bar__sub {
+    font-size: var(--text-xs);
+  }
+}
+
 /* ── Glass Card (DESIGN.md §7.4 — dark sections only) ─────── */
 .glass-card {
   background: var(--glass-surface);

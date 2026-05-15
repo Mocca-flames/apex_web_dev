@@ -176,6 +176,19 @@
 }
 .trust-bar__item:last-child { border-right: none; }
 
+/* ── Trust Bar Mobile (≤640px) ─────────────────────────────── */
+@media (max-width: 640px) {
+  .trust-bar__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-2);
+  }
+  .trust-bar__item {
+    padding: var(--space-4) var(--space-2);
+    border-right: none;
+    border-bottom: none;
+  }
+}
+
 /* - Mobile Version
 
 /* ── Country Coverage Grid (8 cards) ───────────────────────── */
@@ -185,7 +198,7 @@
   gap: var(--space-6);
 }
 @media (max-width: 1024px) {
-  .coverage-grid { grid-template-columns: repeat(2, 1fr); }
+  .coverage-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 640px) {
   .coverage-grid { grid-template-columns: 1fr; }
