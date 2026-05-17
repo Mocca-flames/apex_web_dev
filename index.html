@@ -4,59 +4,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="description"
     content="Cross‑border freight specialists across 8 African countries. 24/7 monitoring, customs clearance, and direct WhatsApp support. Get a quote today.">
   <title>Apex Transport Group – Move Cargo. Cross Borders. No Excuses.</title>
+
+  <!-- Pre-load coverage-overlay guard: .coverage-sticky must NEVER block the page
+       even if stale CSS is served from cache. This runs before all CSS files. -->
+  <style>
+    .coverage-sticky { pointer-events: none !important; }
+    .coverage-sticky.is-visible { pointer-events: auto !important; }
+  </style>
+
   <link rel="stylesheet" href="/css/tokens.css">
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/layout.css">
   <link rel="stylesheet" href="/css/animations.css">
-  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/components.css?v=3">
   <link rel="icon" href="/favicon.ico">
 </head>
 
 <body>
 
-  <!-- Navigation -->
-  <header class="nav" role="banner">
-    <div class="nav__container">
-      <a href="/" class="nav__brand" aria-label="Apex Transport Group Home">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          aria-hidden="true">
-          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-        </svg>
-        APEX
-      </a>
-
-      <nav class="nav__menu" role="navigation" aria-label="Main menu" data-nav-links>
-      </nav>
-
-      <button class="nav__menu-close mobile-show" aria-label="Close menu" id="nav-menu-close">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-
-      <a href="/contact.html" class="nav__cta" data-content="global.nav.cta.label">WhatsApp Us →</a>
-
-      <a href="https://wa.me/27729377143" class="nav__whatsapp" aria-label="WhatsApp us" target="_blank" rel="noopener">
-        <img src="/assets/svg/whatsapp.svg" alt="WhatsApp" width="24" height="24" loading="lazy">
-      </a>
-
-      <button class="nav__toggle" aria-label="Open menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </header>
-
-   <!-- Mobile overlay footer (visible when menu open) -->
-   <div class="nav__mobile-footer" id="mobileFooter" aria-hidden="true">
-   <div class="nav__mobile-row">
-     <span>WhatsApp: <a href="https://wa.me/27729377143" class="nav__mobile-cta" data-content="global.nav.mobileFooter.whatsapp"></a></span>
-     <span>Based: <span data-content="global.nav.mobileFooter.based"></span></span>
-   </div>
-   </div>
+  <!-- Navigation (shared from partials/nav.html) -->
+  <div id="site-nav">
+    <nav class="nav" role="banner"><div class="nav__container"><span>Loading&hellip;</span></div></nav>
+  </div>
 
   <main>
 
@@ -602,7 +577,8 @@
   </svg>
 
    <!-- JavaScript (loaded at end) -->
-   <script src="/js/content.js" defer></script>
+    <script src="/js/content.js" defer></script>
+    <script src="/js/shared-nav.js" defer></script>
    <script src="/js/tier.js" defer></script>
    <script src="/js/scroll.js" defer></script>
    <script src="/js/nav.js" defer></script>
@@ -610,7 +586,7 @@
    <script src="/js/form.js" defer></script>
    <script src="/js/tracking.js" defer></script>
    <script src="/js/services.js" defer></script>
-   <script src="/js/coverage.js" defer></script>
+    <script src="/js/coverage.js?v=3" defer></script>
    <script src="/js/main.js" defer></script>
    <script src="/js/parallax.js" defer></script>
 </body>

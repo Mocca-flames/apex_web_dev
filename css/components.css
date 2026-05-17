@@ -50,6 +50,23 @@
   align-items: center;
   gap: var(--space-2);
 }
+
+/* Logo swap on scroll: default (transparent bg) = BW logo */
+.nav__logo {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+.nav__logo--color {
+  display: none;
+}
+.nav--scrolled .nav__logo--bw {
+  display: none;
+}
+.nav--scrolled .nav__logo--color {
+  display: block;
+}
+
 .nav--scrolled .nav__brand {
   color: var(--apex-navy);
 }
@@ -153,9 +170,22 @@
   color: var(--apex-white);
   transition: color var(--dur-base) var(--ease-out);
 }
-.nav__whatsapp svg {
+.nav__wa-icon {
   width: 24px;
   height: 24px;
+  display: none;
+  flex-shrink: 0;
+}
+.nav__wa-icon--color {
+  display: none;
+}
+.nav__wa-icon--white {
+  display: block;
+}
+.nav--scrolled .nav__wa-icon--white {
+  display: none;
+}
+.nav--scrolled .nav__wa-icon--color {
   display: block;
 }
 .nav--scrolled .nav__whatsapp {
@@ -283,7 +313,7 @@
 .btn-navy:hover {
   background: var(--apex-navy-mid);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(13, 31, 60, 0.25);
+  box-shadow: 0 6px 20px rgba(13,31,60,0.25);
 }
 
 /* Arrow icon within button */
@@ -974,22 +1004,23 @@
   color: var(--apex-white) !important;
 }
 
-/* ─── Section wrapper ──────────────────────────────────────── */
+/* ───────────────────────────────────────────────────────────────── */
+/* ── Coverage Journey — scroll-hijacked sticky section             */
+/* ───────────────────────────────────────────────────────────────── */
 
-
+/* Coverage section header (scrolls away naturally) */
 .coverage-journey__header {
   padding-top: var(--space-20);
   padding-bottom: var(--space-16);
 }
 
-/* ─── Scroll track: creates the scrollable height ─────────── */
+/* Scroll track: creates the scrollable height */
 .coverage-track {
-  /* 8 slides × 100vh = 800vh of scroll room */
   height: calc(8 * 100vh);
   position: relative;
 }
 
-/* ─── Sticky panel: pinned inside the track ───────────────── */
+/* Sticky panel: pinned inside the track */
 .coverage-sticky {
   position: fixed;
   top: 0;
@@ -1010,14 +1041,14 @@
   pointer-events: auto;
 }
 
-/* ─── Slides container ─────────────────────────────────────── */
+/* Slides container */
 .coverage-journey__slides {
   position: relative;
   width: 100%;
   height: 100%;
 }
 
-/* ─── Individual slide ─────────────────────────────────────── */
+/* Individual slide */
 .coverage-slide {
   position: absolute;
   inset: 0;
@@ -1028,7 +1059,6 @@
   padding: var(--space-20);
   opacity: 0;
   pointer-events: none;
-  /* split transition: text fades first, map follows slightly after */
   transition: opacity 0.6s ease-out;
   will-change: opacity;
 }
@@ -1039,14 +1069,13 @@
   z-index: 2;
 }
 
-/* Outgoing slide fades a little faster */
 .coverage-slide.is-leaving {
   opacity: 0;
   transition: opacity 0.4s ease-in;
   z-index: 1;
 }
 
-/* ─── Slide content (text side) ────────────────────────────── */
+/* Slide content (text side) */
 .coverage-slide__content {
   flex: 0 0 auto;
   max-width: min(360px, calc(100vw - 80px));
@@ -1063,7 +1092,6 @@
   letter-spacing: -0.03em;
   line-height: 1.05;
   margin-bottom: var(--space-8);
-  /* slide-in from below on activation */
   transform: translateY(0);
   transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s ease-out;
 }
@@ -1089,7 +1117,7 @@
   font-weight: 700;
 }
 
-/* ─── Map frame ─────────────────────────────────────────────── */
+/* Map frame */
 .coverage-slide__frame {
   flex: 1;
   position: relative;
@@ -1102,357 +1130,9 @@
   height: 100%;
   object-fit: contain;
   border-radius: 24px;
-  /* scale in from 96% to 100% on activation */
 }
 
-/* ─── Progress rail ─────────────────────────────────────────── */
-.coverage-progress {
-  position: absolute;
-  left: var(--space-8);
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  z-index: 10;
-}
-
-.coverage-progress__rail {
-  position: relative;
-  width: 2px;
-  /* 8 labels × ~36px spacing */
-  height: calc(8 * 36px);
-  background: rgba(13, 31, 60, 0.12);
-  border-radius: 2px;
-  flex-shrink: 0;
-}
-
-.coverage-progress__fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: var(--apex-navy);
-  border-radius: 2px;
-  height: 0%;                 /* animated via JS */
-  transition: height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.coverage-progress__dot {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--apex-navy);
-  top: 0%;                    /* animated via JS */
-  transition: top 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  box-shadow: 0 0 0 3px var(--apex-off-white), 0 0 0 4px var(--apex-navy);
-}
-
-.coverage-progress__labels {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.coverage-progress__label {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(13, 31, 60, 0.32);
-  height: 36px;
-  display: flex;
-  align-items: center;
-  transition: color 0.3s ease, transform 0.3s ease;
-  cursor: default;
-}
-
-.coverage-progress__label.is-active {
-  color: var(--apex-navy);
-  transform: translateX(3px);
-}
-
-/* ─── Responsive: narrow viewports ─────────────────────────── */
-@media (max-width: 768px) {
-  .coverage-slide {
-    flex-direction: column;
-    padding: var(--space-8) var(--space-6) var(--space-8) 56px;
-    gap: var(--space-12);
-  }
-
-  .coverage-slide__content {
-    flex: none;
-    max-width: 100%;
-  }
-
-  .coverage-slide__frame {
-    width: 100%;
-    height: 44vw;
-    max-height: none;
-  }
-
-  .coverage-progress__labels {
-    display: none; /* too cramped on mobile — rail only */
-  }
-}
-
-@media (max-width: 480px) {
-  .coverage-slide {
-    padding-left: var(--container-pad);
-  }
-}
-
-/* ─── Map frame ─────────────────────────────────────────────── */
-.coverage-slide__frame {
-  flex: 1;
-  position: relative;
-  height: 72vh;
-  max-height: 680px;
-}
-
-.coverage-slide__map {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: 24px;
-  /* scale in from 96% to 100% on activation */
-}
-
-/* ─── Progress rail ─────────────────────────────────────────── */
-.coverage-progress {
-  position: absolute;
-  left: var(--space-8);
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  z-index: 10;
-}
-
-.coverage-progress__rail {
-  position: relative;
-  width: 2px;
-  /* 8 labels × ~36px spacing */
-  height: calc(8 * 36px);
-  background: rgba(13, 31, 60, 0.12);
-  border-radius: 2px;
-  flex-shrink: 0;
-}
-
-.coverage-progress__fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: var(--apex-navy);
-  border-radius: 2px;
-  height: 0%;                 /* animated via JS */
-  transition: height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.coverage-progress__dot {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--apex-navy);
-  top: 0%;                    /* animated via JS */
-  transition: top 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  box-shadow: 0 0 0 3px var(--apex-off-white), 0 0 0 4px var(--apex-navy);
-}
-
-.coverage-progress__labels {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.coverage-progress__label {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(13, 31, 60, 0.32);
-  height: 36px;
-  display: flex;
-  align-items: center;
-  transition: color 0.3s ease, transform 0.3s ease;
-  cursor: default;
-}
-
-.coverage-progress__label.is-active {
-  color: var(--apex-navy);
-  transform: translateX(3px);
-}
-
-/* ─── Responsive: narrow viewports ─────────────────────────── */
-@media (max-width: 768px) {
-  .coverage-slide {
-    flex-direction: column;
-    padding: var(--space-8) var(--space-6) var(--space-8) 56px;
-    gap: var(--space-12);
-  }
-
-  .coverage-slide__content {
-    flex: none;
-    max-width: 100%;
-  }
-
-  .coverage-slide__frame {
-    width: 100%;
-    height: 44vw;
-    max-height: none;
-  }
-
-  .coverage-progress__labels {
-    display: none; /* too cramped on mobile — rail only */
-  }
-}
-
-@media (max-width: 480px) {
-  .coverage-slide {
-    padding-left: var(--container-pad);
-  }
-}
-
-/* ─── Scroll track: creates the scrollable height ─────────── */
-.coverage-track {
-  /* 8 slides × 100vh = 800vh of scroll room */
-  height: calc(8 * 100vh);
-  position: relative;
-}
-
-/* ─── Sticky panel: pinned inside the track ───────────────── */
-.coverage-sticky {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  display: flex;
-  align-items: stretch;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-  z-index: 10;
-}
-
-.coverage-sticky.is-visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* ─── Slides container ─────────────────────────────────────── */
-.coverage-journey__slides {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-/* ─── Individual slide ─────────────────────────────────────── */
-.coverage-slide {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-24);
-  padding: var(--space-20);
-  opacity: 0;
-  pointer-events: none;
-  /* split transition: text fades first, map follows slightly after */
-  transition: opacity 0.6s ease-out;
-  will-change: opacity;
-}
-
-.coverage-slide.is-active {
-  opacity: 1;
-  pointer-events: auto;
-  z-index: 2;
-}
-
-/* Outgoing slide fades a little faster */
-.coverage-slide.is-leaving {
-  opacity: 0;
-  transition: opacity 0.4s ease-in;
-  z-index: 1;
-}
-
-/* ─── Slide content (text side) ────────────────────────────── */
-.coverage-slide__content {
-  flex: 0 0 auto;
-  max-width: min(360px, calc(100vw - 80px));
-  min-width: 0;
-  overflow: hidden;
-}
-
-.coverage-slide__title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 800;
-  font-size: clamp(var(--text-4xl), 5.5vw, var(--text-7xl));
-  color: var(--apex-navy);
-  text-transform: uppercase;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: var(--space-8);
-  /* slide-in from below on activation */
-  transform: translateY(0);
-  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s ease-out;
-}
-
-.coverage-slide:not(.is-active) .coverage-slide__title {
-  transform: translateY(24px);
-}
-
-.coverage-slide__text {
-  font-size: var(--text-xl);
-  color: var(--apex-charcoal);
-  line-height: 1.8;
-  transform: translateY(0);
-  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.05s, opacity 0.6s ease-out 0.05s;
-}
-
-.coverage-slide:not(.is-active) .coverage-slide__text {
-  transform: translateY(20px);
-}
-
-.coverage-slide__text strong {
-  color: var(--apex-navy);
-  font-weight: 700;
-}
-
-/* ─── Map frame ─────────────────────────────────────────────── */
-.coverage-slide__frame {
-  flex: 1;
-  position: relative;
-  height: 72vh;
-  max-height: 680px;
-}
-
-.coverage-slide__map {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: 24px;
-  /* scale in from 96% to 100% on activation */
-}
-
-/* ─── Progress rail ─────────────────────────────────────────── */
+/* Progress rail */
 .coverage-progress {
   position: absolute;
   left: var(--space-8);
@@ -1525,3 +1205,32 @@
   transform: translateX(3px);
 }
 
+/* Responsive: narrow viewports */
+@media (max-width: 768px) {
+  .coverage-slide {
+    flex-direction: column;
+    padding: var(--space-8) var(--space-6) var(--space-8) 56px;
+    gap: var(--space-12);
+  }
+
+  .coverage-slide__content {
+    flex: none;
+    max-width: 100%;
+  }
+
+  .coverage-slide__frame {
+    width: 100%;
+    height: 44vw;
+    max-height: none;
+  }
+
+  .coverage-progress__labels {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .coverage-slide {
+    padding-left: var(--container-pad);
+  }
+}
