@@ -342,6 +342,7 @@
   pointer-events: none;
   transition: opacity 0.3s;
   z-index: 10;
+  isolation: isolate;
 }
 
 .services-sticky.is-visible {

@@ -14,6 +14,8 @@
 
   var SLIDE_COUNT = 8;
 
+  var _bootGuard = true;   // discard the very first onScroll call (page-load race)
+
   function initCoverage() {
     var section = document.getElementById('coverage');
     if (!section) return;
@@ -29,32 +31,6 @@
       if (window.__ApexDebug) console.warn('[coverage] init: missing elements', { track: !!track, slides: slides.length });
       return;
     }
-
-    if (window.__ApexDebug) {
-      console.log('[coverage] init', {
-        trackRect: track.getBoundingClientRect(),
-        trackComputedH: getComputedStyle(track).height,
-        slides: slides.length,
-        fillEl: !!fillEl,
-        dotEl: !!dotEl,
-        windowInnerHeight: window.innerHeight
-      });
-    }
-
-    /* ── Prove sticky starts hidden ───────────────────────────────── */
-    if (sticky) sticky.classList.remove('is-visible');
-
-    /* -----------------------------------------------------------------
-     * Schedule THREE follow-up runs of out-of-range check to absorb
-     * late-asynchronous layout flushes (content.json build, font load,
-     * image decode, scroll-by-hash, etc.) that can push the section into
-     * or out of the viewport after initCoverage returns.
-     * Each delayed run KNOWS the sticky must SHOW or HIDE independently
-     * of the first synchronous call. Nothing trusts a cached rect. */
-    function flushCheck() { onScroll(); }
-    setTimeout(flushCheck, 100);
-    setTimeout(flushCheck, 500);
-    setTimeout(flushCheck, 2000);
 
     /* ── Metrics & State ─────────────────────────────────────────── */
     var currentIndex = 0;
@@ -83,6 +59,12 @@
 
     /* ── Core scroll handler ──────────────────────────────────────── */
     function onScroll() {
+      /* The very first call fires during page-load (services.js performs
+         an init scroll to the services section), before layout is stable.
+         Guard: drop the first call unconditionally so the sticky never
+         shows while the page is still assembling. */
+      if (_bootGuard) { _bootGuard = false; return; }
+
       /* Always strip visible FIRST so a race cannot leave it permanently
          visible if the section is out of range, has zero span, or the DOM
          is mid-rebuild. */
@@ -168,8 +150,8 @@
       }
     }
 
-    onScroll(); /* run once on init in case page loads mid-section */
-  }
+     onScroll(); /* run once on init in case page loads mid-section */
+   }
 
   window.initCoverage = initCoverage;
 })();
