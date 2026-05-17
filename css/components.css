@@ -1059,6 +1059,366 @@
 }
 
 /* ───────────────────────────────────────────────────────────────── */
+/* ── Services — scroll-driven reveal (replaces .services-grid)
+   Track height = service count × 100vh (hijacked scroll space)
+   Sticky inner pins viewport for the full track height
+   Desktop: 55% text (left) | 45% images (right)
+   Mobile:  scroll-driven sticky, single column
+            order: counter + title → image → body → button
+            progress: horizontal dot row at bottom
+   ───────────────────────────────────────────────────────── */
+
+.services-track {
+  --service-count: 6;
+  height: calc(var(--service-count) * 100vh);
+  position: relative;
+  background: var(--apex-off-white);
+  margin: 0;
+  padding: 0;
+}
+
+.services-sticky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 55fr 45fr;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 10;
+  isolation: isolate;
+}
+
+.services-sticky.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Left: text column — embrace white space */
+.services-text {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-12);
+  padding: var(--space-20) var(--space-16) var(--space-20) var(--container-pad);
+  background: var(--apex-white);
+  position: relative;
+  z-index: 2;
+}
+
+.services-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+  position: relative;
+  width: 56px;
+  height: 100%;
+  padding: 0;
+}
+.services-progress__track {
+  position: absolute;
+  top: 4%;
+  bottom: 4%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  background: var(--apex-stone);
+  border-radius: 1px;
+}
+.services-progress__fill {
+  width: 100%;
+  height: 0%;
+  background: var(--apex-orange);
+  border-radius: 1px;
+  transition: height 0.1s linear;
+}
+.services-progress__dots {
+  position: absolute;
+  top: 4%;
+  bottom: 4%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+.services-progress__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--apex-stone);
+  background: var(--apex-white);
+  cursor: pointer;
+  transition:
+    border-color 0.3s var(--ease-out),
+    background 0.3s var(--ease-out),
+    transform 0.3s var(--ease-spring);
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+.services-progress__dot.is-active {
+  border-color: var(--apex-orange);
+  background: var(--apex-orange);
+  transform: scale(1.4);
+}
+.services-progress__dot.is-past {
+  border-color: var(--apex-orange);
+  background: var(--apex-orange);
+  transform: scale(1.1);
+}
+
+/* Panels — tall, centered, breathable */
+.services-panels {
+  position: relative;
+  flex: 1;
+  display: grid;
+  grid-template-areas: 'panel';
+  min-height: 0;
+}
+.services-panel {
+  grid-area: panel;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-6);
+  padding: var(--space-8) 0;
+  opacity: 0;
+  transform: translateY(32px);
+  pointer-events: none;
+  transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+  grid-row: 1;
+  grid-column: 1;
+}
+.services-panel.is-active {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.services-panel.is-exiting {
+  opacity: 0;
+  transform: translateY(-24px);
+  pointer-events: none;
+}
+.services-panel__num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--apex-orange);
+  letter-spacing: 0.15em;
+  margin-bottom: var(--space-3);
+}
+.services-panel__title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: clamp(var(--text-4xl), 5vw, var(--text-6xl));
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  color: var(--apex-navy);
+  text-transform: uppercase;
+  margin: 0 0 var(--space-5) 0;
+}
+.services-panel__body {
+  font-size: var(--text-lg);
+  color: var(--apex-charcoal);
+  line-height: 1.75;
+  max-width: none;
+  margin: 0 0 var(--space-6) 0;
+}
+.services-panel .btn {
+  align-self: flex-start;
+  margin-top: var(--space-2);
+}
+
+/* Right: image column */
+.services-images {
+  position: relative;
+  overflow: hidden;
+  background-color: rgb(255, 255, 255);
+}
+.services-image {
+  position: absolute;
+  inset: 6%;
+  opacity: 0;
+  transition: opacity 0.7s var(--ease-out);
+  will-change: opacity;
+}
+.services-image.is-active {
+  opacity: 1;
+  z-index: 1;
+}
+.services-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 24px;
+  box-shadow: 0 24px 56px rgba(13,31,60,0.18);
+  transition: box-shadow 0.7s var(--ease-out);
+  will-change: box-shadow;
+}
+.services-image.is-active img {
+  box-shadow: 0 32px 64px rgba(13,31,60,0.22);
+}
+.services-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(13, 31, 60, 0.18) 0%, transparent 40%);
+  pointer-events: none;
+  border-radius: 24px;
+}
+
+/* ── Mobile — scroll-driven sticky, single column ────────────────────────
+   Same hijacked-scroll mechanic as desktop, portrait layout:
+     counter + title → image → body → button → progress dots
+   ─────────────────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+
+  /* Restore tall scroll space so the hijack fires */
+  .services-track {
+    height: calc(var(--service-count) * 100vh);
+  }
+
+  /* Restore fixed sticky, single-column */
+  .services-sticky {
+    position: fixed;
+    height: 100vh;
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    background: var(--apex-white);
+  }
+
+  /* Text column fills the whole sticky, vertical flex */
+  .services-text {
+    flex: 1;
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--space-8) var(--container-pad) var(--space-4);
+    gap: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* ── Panels: grid-stacked (same as desktop) ── */
+  .services-panels {
+    flex: 1;
+    display: grid;
+    grid-template-areas: 'panel';
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* Each panel: flex column, scroll-driven opacity/transform */
+  .services-panel {
+    grid-area: panel;
+    grid-row: 1;
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: var(--space-3);
+    padding: 0;
+    overflow: hidden;
+
+    /* Driven by JS — start hidden */
+    opacity: 0;
+    transform: translateY(24px);
+    pointer-events: none;
+    transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+  }
+
+  .services-panel.is-active {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .services-panel.is-exiting {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+  }
+
+  /* Visual order: counter → title → image → body → button */
+  .services-panel__num         { order: 1; margin-bottom: 0; }
+  .services-panel__title       { order: 2; margin-bottom: 0; font-size: clamp(var(--text-2xl), 7vw, var(--text-4xl)); }
+  .services-panel__mobile-img  { order: 3; }
+  .services-panel__body        { order: 4; font-size: var(--text-base); margin-bottom: 0; flex: 1; overflow: hidden; }
+  .services-panel .btn         { order: 5; margin-top: 0; }
+
+  /* Mobile image — full width, fixed aspect, rounded */
+  .services-panel__mobile-img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 12px;
+    flex-shrink: 0;
+    box-shadow: 0 8px 24px rgba(13, 31, 60, 0.14);
+  }
+
+  /* Desktop image column — hidden on mobile (images are inline) */
+  .services-images { display: none; }
+
+  /* ── Progress: horizontal dot strip at bottom of text col ── */
+  .services-progress {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: auto;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-3) 0;
+    gap: var(--space-2);
+  }
+
+  /* Hide the vertical fill rail — dots carry state on mobile */
+  .services-progress__track,
+  .services-progress__fill { display: none; }
+
+  .services-progress__dots {
+    position: static;
+    transform: none;
+    flex-direction: row;
+    width: auto;
+    height: auto;
+    gap: var(--space-2);
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Slightly smaller dots on mobile */
+  .services-progress__dot {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+/* ── Reduced motion — disable hijack entirely ── */
+@media (prefers-reduced-motion: reduce) {
+  .services-panel,
+  .services-image,
+  .services-image img {
+    transition: none;
+  }
+  .services-track {
+    height: auto;
+  }
+  .services-sticky {
+    position: static;
+    height: auto;
+  }
+}
+
+/* ───────────────────────────────────────────────────────────────── */
 /* ── Coverage Journey — scroll-hijacked sticky section             */
 /* ───────────────────────────────────────────────────────────────── */
 
@@ -1089,6 +1449,7 @@
   transition: opacity 0.3s;
   z-index: 10;
   isolation: isolate;
+  pointer-events: none; 
 }
 
 .coverage-sticky.is-visible {

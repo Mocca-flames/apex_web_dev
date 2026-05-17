@@ -8,48 +8,71 @@
  *  - onScroll always strips is-visible first; only re-adds when progress is
  *    legitimately in the 0-to-1 range (track is inside the viewport).
  *  - Keyboard access only when the user is genuinely inside the track.
+ *
+ * Fix (pointer-events / inert):
+ *  - setStickyVisible() is the single source of truth for show/hide.
+ *  - When hidden: pointer-events:none (CSS) + inert attr stop the full-height
+ *    sticky panel from intercepting clicks/focus on every other section.
+ *  - When visible: inert is removed so the panel is interactive again.
+ *  - CSS must pair with this: .coverage-sticky { pointer-events: none }
+ *                             .coverage-sticky.is-visible { pointer-events: auto }
  */
 (function () {
   'use strict';
 
   var SLIDE_COUNT = 8;
 
-  var _bootGuard = true;   // discard the very first onScroll call (page-load race)
+  var _bootGuard = true;   /* discard the very first onScroll call (page-load race) */
 
   function initCoverage() {
     var section = document.getElementById('coverage');
     if (!section) return;
 
-    var track  = section.querySelector('.coverage-track');
-    var sticky = section.querySelector('.coverage-sticky');
-    var slides = section.querySelectorAll('.coverage-slide');
-    var labels = section.querySelectorAll('.coverage-progress__label');
-    var fillEl = document.getElementById('js-coverage-fill');
-    var dotEl  = document.getElementById('js-coverage-dot');
+    var track    = section.querySelector('.coverage-track');
+    var sticky   = section.querySelector('.coverage-sticky');
+    var slides   = section.querySelectorAll('.coverage-slide');
+    var labels   = section.querySelectorAll('.coverage-progress__label');
+    var fillEl   = document.getElementById('js-coverage-fill');
+    var dotEl    = document.getElementById('js-coverage-dot');
 
     if (!track || !slides.length) {
       if (window.__ApexDebug) console.warn('[coverage] init: missing elements', { track: !!track, slides: slides.length });
       return;
     }
 
+    /* ── Visibility helper ────────────────────────────────────────────
+     *  Single source of truth for showing/hiding the sticky panel.
+     *  - is-visible  drives CSS opacity/transform (paired with pointer-events
+     *    via the CSS rules described in the file header).
+     *  - inert removes the panel from tab order AND the a11y tree when hidden,
+     *    so screen-readers and keyboard users can't land inside it accidentally.
+     * ─────────────────────────────────────────────────────────────── */
+    function setStickyVisible(visible) {
+      if (!sticky) return;
+      sticky.classList.toggle('is-visible', visible);
+      if (visible) {
+        sticky.removeAttribute('inert');
+      } else {
+        sticky.setAttribute('inert', '');
+      }
+    }
+
     /* ── Metrics & State ─────────────────────────────────────────── */
     var currentIndex = 0;
-    setActive(0, true);   /* initialise without animation */
+    setActive(0, true);  /* initialise without animation */
 
     function setActive(index, instant) {
       if (index === currentIndex && !instant) return;
       currentIndex = index;
 
       slides.forEach(function (slide, i) {
-        var active = i === index;
-        slide.classList.toggle('is-active', active);
+        slide.classList.toggle('is-active', i === index);
       });
 
       labels.forEach(function (label, i) {
         label.classList.toggle('is-active', i === index);
       });
 
-      /* progress rail: 0 at top of first label, 100 at bottom of last */
       if (fillEl && dotEl) {
         var pct = ((index + 0.5) / SLIDE_COUNT) * 100;
         fillEl.style.height = pct + '%';
@@ -65,40 +88,24 @@
          shows while the page is still assembling. */
       if (_bootGuard) { _bootGuard = false; return; }
 
-      /* Always strip visible FIRST so a race cannot leave it permanently
-         visible if the section is out of range, has zero span, or the DOM
-         is mid-rebuild. */
-      if (sticky) sticky.classList.remove('is-visible');
+      setStickyVisible(false);
 
-      /* If the track has less than one viewport of scroll range, there is
-         nothing to pin — bail out leaving the sticky hidden. This covers
-         mobile browsers, reduced-motion, and any layout flush. */
-      var rect     = track.getBoundingClientRect();
+      var rect      = track.getBoundingClientRect();
       var trackSpan = rect.height - window.innerHeight;
 
       if (trackSpan <= 0) return;
 
       var progress = -rect.top / trackSpan;
-      if (progress < 0 || progress > 1) return;   /* section not in viewport */
+      if (progress < 0 || progress > 1) return;
 
-      /* Track IS in viewport: show the fixed panel. */
-      sticky.classList.add('is-visible');
+      setStickyVisible(true);
 
       var segmentSize = 1 / SLIDE_COUNT;
-      var targetIndex = Math.min(
-        Math.floor(progress / segmentSize),
-        SLIDE_COUNT - 1
-      );
-
+      var targetIndex = Math.min(Math.floor(progress / segmentSize), SLIDE_COUNT - 1);
       setActive(targetIndex, false);
     }
 
-    /* ── Re-hide sticky whenever the coverage DOM is mutated
-            (content.js calls buildCoverageSlides() after its JSON fetch resolves,
-            which replaces .coverage-journey__slides innerHTML — invalidating
-            any liveNodeList coverage.js previously held.)
-            Re-bind labels/slides after every mutation so the observer never
-            operates on stale detached references. */
+    /* ── Re-hide sticky whenever the coverage DOM is mutated ───────── */
     var mo = new MutationObserver(function () {
       var newSlides = section.querySelectorAll('.coverage-slide');
       var newLabels = section.querySelectorAll('.coverage-progress__label');
@@ -107,14 +114,40 @@
       slides = newSlides;
       labels = newLabels;
 
-      if (sticky) sticky.classList.remove('is-visible');
+      setStickyVisible(false);
       setActive(0, true);
     });
 
-    mo.observe(section, {
-      childList: true,
-      subtree:   true
-    });
+    mo.observe(section, { childList: true, subtree: true });
+
+    /* ── IntersectionObserver ─────────────────────────────────────── */
+    // Ambiguous race: onScroll fires when progress falls inside [0,1]
+    // even if the track is NOT actually a stacking overlay above the page.
+    // `IntersectionObserver` is unambiguous — it fires only when the track
+    // geometry is *confirmed* inside the viewport. The callback uses the
+    // *same* guard flow as onScroll so the two paths stay in sync.
+    if ('IntersectionObserver' in window) {
+      (function observeTrack() {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting || entry.boundingClientRect.height <= 0) {
+              setStickyVisible(false);
+              return;
+            }
+            var topIO    = entry.boundingClientRect.top;
+            var heightIO = entry.boundingClientRect.height;
+            var spanIO   = heightIO - window.innerHeight;
+            if (spanIO <= 0) { setStickyVisible(false); return; }
+            var p = -topIO / spanIO;
+            if (p < 0 || p > 1) { setStickyVisible(false); return; }
+            setStickyVisible(true);
+            setActive(Math.min(Math.floor(p * SLIDE_COUNT), SLIDE_COUNT - 1), false);
+          });
+        }, { rootMargin: '0px 0px -1px 0px' });
+
+        io.observe(track);
+      })();
+    }
 
     /* ── Subscribe to scroll events ──────────────────────────────── */
     var lenis = window.getLenis ? window.getLenis() : null;
@@ -137,7 +170,13 @@
       }
     });
 
+    /* tabindex stays — inert overrides it when the panel is hidden,
+       so there is no double-management needed. */
     sticky.setAttribute('tabindex', '0');
+
+    /* Start hidden — inert set immediately so nothing leaks through
+       before the first legitimate scroll event. */
+    setStickyVisible(false);
 
     function scrollToSlide(idx) {
       var trackHeight = track.offsetHeight - window.innerHeight;
@@ -150,8 +189,8 @@
       }
     }
 
-     onScroll(); /* run once on init in case page loads mid-section */
-   }
+    onScroll(); /* run once on init in case page loads mid-section */
+  }
 
   window.initCoverage = initCoverage;
 })();
