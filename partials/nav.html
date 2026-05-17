@@ -7,14 +7,8 @@
       </a>
 
       <nav class="nav__menu" role="navigation" aria-label="Main menu" data-nav-links>
+        <div id="nav-backdrop" aria-hidden="true"></div>
       </nav>
-
-      <button class="nav__menu-close mobile-show" aria-label="Close menu" id="nav-menu-close">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
 
       <a href="/contact.html" class="nav__cta" data-content="global.nav.cta.label">WhatsApp Us &rarr;</a>
 
@@ -23,8 +17,12 @@
         <img src="/assets/icons/whatsapp_color.png" alt="WhatsApp" class="nav__wa-icon nav__wa-icon--color" width="24" height="24" loading="lazy">
       </a>
 
+      <button class="nav__menu-close" aria-label="Close menu" id="nav-menu-close">
+        <img src="/assets/svg/close.svg" alt="" class="nav__menu-close-icon" width="24" height="24" loading="lazy">
+      </button>
+
       <button class="nav__toggle" aria-label="Open menu" aria-expanded="false">
-        <span></span><span></span><span></span>
+        <img src="/assets/svg/option.svg" alt="" class="nav__toggle-icon" width="24" height="24" loading="lazy">
       </button>
     </div>
   </header>

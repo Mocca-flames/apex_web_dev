@@ -406,6 +406,18 @@
     refresh: buildAll
   };
 
+  // After shared-nav.js injects the nav HTML fragment, re-run
+  // buildAll() so links are rendered even when content.js starts
+  // before the nav fetch resolves. Guard with a flag to avoid
+  // calling buildAll() redundantly on subsequent nav:injected fires
+  // (the event is also dispatched after footer injection).
+  var _navInjectedDone = false;
+  document.addEventListener('nav:injected', function _retryBuild() {
+    if (_navInjectedDone) return;
+    _navInjectedDone = true;
+    buildAll();
+  });
+
   // Start loading content immediately
   var contentPromise = fetchContent().then(function(data) {
     if (data) {

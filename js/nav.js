@@ -27,7 +27,10 @@
       toggle.setAttribute('aria-expanded', 'true');
       menu.classList.add('is-open');
       if (mobileFooter) mobileFooter.classList.add('is-visible');
-      if (closeBtn) closeBtn.style.display = 'flex';
+      toggle.setAttribute('aria-label', 'Close menu');
+      if (closeBtn) {
+        closeBtn.classList.add('is-visible');
+      }
 
       // Lock body scroll: position:fixed + overflow:hidden on both root nodes.
       document.body.style.position = 'fixed';
@@ -41,7 +44,10 @@
       toggle.setAttribute('aria-expanded', 'false');
       menu.classList.remove('is-open');
       if (mobileFooter) mobileFooter.classList.remove('is-visible');
-      if (closeBtn) closeBtn.style.display = 'none';
+      if (closeBtn) {
+        closeBtn.classList.remove('is-visible');
+      }
+      toggle.setAttribute('aria-label', 'Open menu');
 
       document.body.style.position = '';
       document.body.style.top = '';
@@ -62,10 +68,6 @@
       }
     }
 
-    if (closeBtn) {
-      closeBtn.addEventListener('click', closeMenu);
-    }
-
     toggle.addEventListener('click', function() {
       toggle.getAttribute('aria-expanded') === 'true' ? closeMenu() : openMenu();
     });
@@ -77,6 +79,10 @@
     var backdrop = document.getElementById('nav-backdrop');
     if (backdrop) {
       backdrop.addEventListener('click', closeMenu);
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeMenu);
     }
 
     document.addEventListener('scroll', function onMenuScroll() {

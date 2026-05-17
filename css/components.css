@@ -32,6 +32,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
   width: 100%;
   max-width: var(--container-max);
   margin-inline: auto;
@@ -143,38 +144,91 @@
   box-shadow: 0 4px 20px var(--apex-orange-glow);
 }
 
-/* Mobile menu toggle */
+/* ── Mobile menu toggle ────────────────────────────────────────── */
 .nav__toggle {
   display: none;
-  flex-direction: column;
-  gap: 5px;
-  padding: var(--space-2);
+  width: 52px;
+  height: 52px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   background: none;
   border: none;
   cursor: pointer;
 }
-.nav__toggle span {
+.nav__toggle .nav__toggle-icon,
+.nav__toggle-icon {
   width: 24px;
-  height: 2px;
-  background: var(--apex-white);
-  transition: 0.3s;
+  height: 24px;
+  flex-shrink: 0;
+  transition: filter var(--dur-base) var(--ease-out);
+  filter: invert(1) brightness(12);
 }
-.nav--scrolled .nav__toggle span {
-  background: var(--apex-navy);
+.nav--scrolled .nav__toggle .nav__toggle-icon,
+.nav--scrolled .nav__toggle-icon {
+  filter: invert(1) brightness(0.1);
 }
 
-/* WhatsApp icon button (mobile only) */
-.nav__whatsapp {
+/* ── Mobile close button (SVG icon) ───────────────────────────── */
+.nav__menu-close {
+  width: 52px;
+  height: 52px;
+  padding: 0 var(--space-3) 0 0;
+  overflow: visible;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1001;
+  transition: opacity 0.35s ease;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  opacity: 0;
+  pointer-events: none;
+}
+.nav__menu-close.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.nav__menu-close .nav__menu-close-icon,
+.nav__menu-close-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  transition: filter var(--dur-base) var(--ease-out);
+  filter: invert(1) brightness(10);
+}
+.nav--scrolled .nav__menu-close .nav__menu-close-icon,
+.nav--scrolled .nav__menu-close-icon {
+  filter: none;
+}
+
+@media (min-width: 1025px) {
+  .nav__mobile-footer { display: none !important; }
+}
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+
+
+
+
+
+.nav__whatsapp, .nav__wa-icon, .nav__wa-icon--color {
   display: none;
-  padding: var(--space-2);
-  color: var(--apex-white);
-  transition: color var(--dur-base) var(--ease-out);
 }
 .nav__wa-icon {
   width: 24px;
   height: 24px;
-  display: none;
   flex-shrink: 0;
+}
+.nav__wa-icon--white {
+  display: block;
+}
+.nav__whatsapp {
+  padding: var(--space-2);
+  color: var(--apex-white);
+  transition: color var(--dur-base) var(--ease-out);
 }
 .nav__wa-icon--color {
   display: none;
@@ -227,7 +281,7 @@
   }
 }
 
-/* Mobile overlay footer (CONTENT.md lines 58–65) */
+/* Mobile overlay footer */
 .nav__mobile-footer {
   position: fixed;
   bottom: 0;
