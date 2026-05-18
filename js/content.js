@@ -270,7 +270,10 @@
             '<p class="coverage-slide__text"><strong>(' + country.status + ')</strong> — ' + descMap[country.name] + '</p>' +
           '</div>' +
           '<div class="coverage-slide__frame">' +
-            '<img class="coverage-slide__map" src="/experiment/' + codeMap[country.name] + '.webp" alt="' + country.name + ' — ' + country.status + '" loading="lazy" decoding="async">' +
+            '<picture>' +
+              '<source media="(max-width: 768px)" srcset="/country_mobile/' + codeMap[country.name] + '.webp" type="image/webp">' +
+              '<img class="coverage-slide__map" src="/experiment/' + codeMap[country.name] + '.webp" alt="' + country.name + ' — ' + country.status + '" loading="lazy" decoding="async">' +
+            '</picture>' +
           '</div>' +
         '</div>';
 

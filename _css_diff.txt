@@ -1,0 +1,133 @@
+﻿diff --git a/css/components.css b/css/components.css
+index a9685d0..c04f832 100644
+--- a/css/components.css
++++ b/css/components.css
+@@ -1725,23 +1725,25 @@
+     color: var(--apex-orange);
+   }
+ 
+-  /* Map frame: fills all remaining height below content block */
++  /* Map frame: natural card — no absolute children, no overflow clipping  */
+   .coverage-slide__frame {
+-    flex: 1;
+-    min-height: 0;
++    width: min(80vw, 360px);
++    max-height: 50vh;
++    margin: var(--space-3) auto 0;
++    flex-shrink: 0;
+     position: relative;
+-    width: 100%;
++    border-radius: 12px;
++    overflow: hidden;
++    background: var(--apex-off-white);
+   }
+ 
+   .coverage-slide__map {
+-    position: absolute;
+-    inset: 0;
+-    width: 40%;
+-    height: 40%;
++    display: block;
++    width: 100%;
++    height: 100%;
+     object-fit: cover;
+     object-position: center;
+-    border-radius: 0;
+-    aspect-ratio: 16 / 9;
++    border-radius: inherit;
+   }
+ 
+   /* ── Progress: horizontal dot strip at bottom ────────────────
+@@ -1905,22 +1907,25 @@
+     color: var(--apex-orange);
+   }
+ 
+-  /* Map frame: fills all remaining height below content block */
++  /* Map frame: natural card — title and text are in normal block flow */
+   .coverage-slide__frame {
+-    flex: 1;
+-    min-height: 0;
++    width: min(80vw, 360px);
++    max-height: 50vh;
++    margin: var(--space-3) auto 0;
++    flex-shrink: 0;
+     position: relative;
+-    width: 100%;
++    border-radius: 12px;
++    overflow: hidden;
++    background: var(--apex-off-white);
+   }
+ 
+   .coverage-slide__map {
+-    position: absolute;
+-    inset: 0;
++    display: block;
+     width: 100%;
+     height: 100%;
+     object-fit: cover;
+     object-position: center;
+-    border-radius: 0;
++    border-radius: inherit;
+   }
+ 
+   /* ── Progress: horizontal dot strip at bottom ────────────────
+@@ -2000,6 +2005,33 @@
+   .coverage-slide__text {
+     font-size: var(--text-xs);
+   }
++
++   /* ── Mobile flat layout: title above map, text below map ───────  */
++  .coverage-slide__title[data-title] {
++    position: static;
++    background: none;
++    z-index: auto;
++  }
++
++  .coverage-slide__text[data-text] {
++    position: static;
++    background: none;
++    z-index: auto;
++  }
++
++  .coverage-slide__frame {
++    position: relative;
++    flex-shrink: 0;
++  }
++
++  .coverage-slide__frame::before {
++    content: '';
++    position: absolute;
++    inset: 0;
++    border-radius: inherit;
++    background: var(--apex-off-white);
++    z-index: -1;
++  }
+ }
+ 
+ /* ── Tablet (769px – 1024px) — slightly more breathing room ── */
+@@ -2023,6 +2055,24 @@
+     height: 10px;
+     min-width: 10px;
+   }
++
++   /* ── Tablet flat layout: title above map, text below map ───────  */
++  .coverage-slide__title[data-title] {
++    position: static;
++    background: none;
++    z-index: auto;
++  }
++
++  .coverage-slide__text[data-text] {
++    position: static;
++    background: none;
++    z-index: auto;
++  }
++
++  .coverage-slide__frame {
++    position: relative;
++    flex-shrink: 0;
++  }
+ }
+ 
+ /* ── Reduced motion — disable hijack ──────────────────────── */
+
