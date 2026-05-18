@@ -1357,7 +1357,7 @@
   /* Mobile image — full width, fixed aspect, rounded */
   .services-panel__mobile-img {
     width: 100%;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 9 / 10;
     object-fit: cover;
     border-radius: 12px;
     flex-shrink: 0;
