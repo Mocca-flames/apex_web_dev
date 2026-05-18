@@ -1622,32 +1622,444 @@
   transform: translateX(3px);
 }
 
-/* Responsive: narrow viewports */
-@media (max-width: 768px) {
-  .coverage-slide {
-    flex-direction: column;
-    padding: var(--space-8) var(--space-6) var(--space-8) 56px;
-    gap: var(--space-12);
+/* ── Coverage Journey — Mobile & Tablet (scroll-driven sticky)
+   Same hijacked-scroll mechanic as desktop and services.
+   On mobile the vertical progress rail becomes a horizontal
+   dot strip — labels are restyled as dots, JS is unchanged
+   (it already toggles is-active on each label element).
+   ─────────────────────────────────────────────────────────── */
+
+/* ── Shared mobile/tablet base (≤ 1024px) ─────────────────── */
+@media (max-width: 1024px) {
+
+  /* Restore tall scroll space so the JS hijack fires */
+  .coverage-track {
+    height: calc(8 * 100vh); /* mirrors SLIDE_COUNT in coverage.js */
   }
 
-  .coverage-slide__content {
-    flex: none;
-    max-width: 100%;
-  }
-
-  .coverage-slide__frame {
+  /* Restore fixed sticky, full-viewport, single column */
+  .coverage-sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 44vw;
-    max-height: none;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
-  .coverage-progress__labels {
+  /* Slides container fills remaining space */
+  .coverage-journey__slides {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-areas: 'slide';
+  }
+
+  /* Each slide: stacked — text block at top, map fills below */
+  .coverage-slide {
+    grid-area: slide;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0;
+    gap: 0;
+  }
+
+  /* Content block: title + text — pinned at top, white bg */
+  .coverage-slide__content {
+    position: static;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5) var(--container-pad) var(--space-4);
+    background: var(--apex-white);
+    z-index: auto;
+    pointer-events: auto;
+    inset: auto;
+    justify-content: flex-start;
+  }
+
+  .coverage-slide__content > * {
+    pointer-events: auto;
+  }
+
+  .coverage-slide__title {
+    position: static;
+    color: var(--apex-navy);
+    text-shadow: none;
+    font-size: clamp(var(--text-2xl), 6vw, var(--text-4xl));
+    margin-bottom: 0;
+    transform: none;
+    opacity: 1;
+  }
+
+  /* Inactive slide titles — driven by parent is-active, not direct selectors */
+  .coverage-slide:not(.is-active) .coverage-slide__title {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+
+  .coverage-slide__text {
+    position: static;
+    color: var(--apex-charcoal);
+    text-shadow: none;
+    background: none;
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    transform: none;
+    opacity: 1;
+  }
+
+  .coverage-slide:not(.is-active) .coverage-slide__text {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+
+  .coverage-slide__text strong {
+    color: var(--apex-orange);
+  }
+
+  /* Map frame: fills all remaining height below content block */
+  .coverage-slide__frame {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    width: 100%;
+  }
+
+  .coverage-slide__map {
+    position: absolute;
+    inset: 0;
+    width: 40%;
+    height: 40%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 0;
+    aspect-ratio: 16 / 9;
+  }
+
+  /* ── Progress: horizontal dot strip at bottom ────────────────
+     The vertical rail and moving dot are hidden.
+     Labels are restyled as circular dots — JS already toggles
+     is-active on each <li>, so no JS changes are needed.
+     ─────────────────────────────────────────────────────────── */
+  .coverage-progress {
+    flex-shrink: 0;
+    flex-direction: row;
+    width: 100%;
+    height: auto;
+    padding: var(--space-3) var(--container-pad);
+    align-items: center;
+    justify-content: center;
+    background: var(--apex-white);
+    gap: 0;
+  }
+
+  /* Hide vertical rail, fill bar and moving dot */
+  .coverage-progress__rail,
+  .coverage-progress__fill,
+  #js-coverage-dot {
     display: none;
+  }
+
+  /* Labels list: horizontal row of dots */
+  .coverage-progress__labels {
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Each label: collapse text, render as a dot */
+  .coverage-progress__label {
+    width: 8px;
+    height: 8px;
+    min-width: 8px;
+    border-radius: 50%;
+    background: var(--apex-stone);
+    font-size: 0;           /* hides country name text */
+    line-height: 0;
+    overflow: hidden;
+    cursor: default;
+    transition:
+      background 0.3s var(--ease-out),
+      transform 0.3s var(--ease-spring);
+  }
+
+  .coverage-progress__label.is-active {
+    background: var(--apex-orange);
+    transform: scale(1.6);
   }
 }
 
-@media (max-width: 480px) {
+/* ── Coverage Journey — Mobile & Tablet (scroll-driven sticky)
+   Same hijacked-scroll mechanic as desktop and services.
+   On mobile the vertical progress rail becomes a horizontal
+   dot strip — labels are restyled as dots, JS is unchanged
+   (it already toggles is-active on each label element).
+   ─────────────────────────────────────────────────────────── */
+
+/* ── Shared mobile/tablet base (≤ 1024px) ─────────────────── */
+@media (max-width: 1024px) {
+
+  /* Restore tall scroll space so the JS hijack fires */
+  .coverage-track {
+    height: calc(8 * 100vh); /* mirrors SLIDE_COUNT in coverage.js */
+  }
+
+  /* Restore fixed sticky, full-viewport, single column */
+  .coverage-sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Slides container fills remaining space */
+  .coverage-journey__slides {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-areas: 'slide';
+  }
+
+  /* Each slide: stacked — text block at top, map fills below */
   .coverage-slide {
-    padding-left: var(--container-pad);
+    grid-area: slide;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0;
+    gap: 0;
+  }
+
+  /* Content block: title + text — pinned at top, white bg */
+  .coverage-slide__content {
+    position: static;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5) var(--container-pad) var(--space-4);
+    background: var(--apex-white);
+    z-index: auto;
+    pointer-events: auto;
+    inset: auto;
+    justify-content: flex-start;
+  }
+
+  .coverage-slide__content > * {
+    pointer-events: auto;
+  }
+
+  .coverage-slide__title {
+    position: static;
+    color: var(--apex-navy);
+    text-shadow: none;
+    font-size: clamp(var(--text-2xl), 6vw, var(--text-4xl));
+    margin-bottom: 0;
+    transform: none;
+    opacity: 1;
+  }
+
+  /* Inactive slide titles — driven by parent is-active, not direct selectors */
+  .coverage-slide:not(.is-active) .coverage-slide__title {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+
+  .coverage-slide__text {
+    position: static;
+    color: var(--apex-charcoal);
+    text-shadow: none;
+    background: none;
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    transform: none;
+    opacity: 1;
+  }
+
+  .coverage-slide:not(.is-active) .coverage-slide__text {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+
+  .coverage-slide__text strong {
+    color: var(--apex-orange);
+  }
+
+  /* Map frame: fills all remaining height below content block */
+  .coverage-slide__frame {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    width: 100%;
+  }
+
+  .coverage-slide__map {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 0;
+  }
+
+  /* ── Progress: horizontal dot strip at bottom ────────────────
+     The vertical rail and moving dot are hidden.
+     Labels are restyled as circular dots — JS already toggles
+     is-active on each <li>, so no JS changes are needed.
+     ─────────────────────────────────────────────────────────── */
+  .coverage-progress {
+    flex-shrink: 0;
+    flex-direction: row;
+    width: 100%;
+    height: auto;
+    padding: var(--space-3) var(--container-pad);
+    align-items: center;
+    justify-content: center;
+    background: var(--apex-white);
+    gap: 0;
+  }
+
+  /* Hide vertical rail, fill bar and moving dot */
+  .coverage-progress__rail,
+  .coverage-progress__fill,
+  #js-coverage-dot {
+    display: none;
+  }
+
+  /* Labels list: horizontal row of dots */
+  .coverage-progress__labels {
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Each label: collapse text, render as a dot */
+  .coverage-progress__label {
+    width: 8px;
+    height: 8px;
+    min-width: 8px;
+    border-radius: 50%;
+    background: var(--apex-stone);
+    font-size: 0;           /* hides country name text */
+    line-height: 0;
+    overflow: hidden;
+    cursor: default;
+    transition:
+      background 0.3s var(--ease-out),
+      transform 0.3s var(--ease-spring);
+  }
+
+  .coverage-progress__label.is-active {
+    background: var(--apex-orange);
+    transform: scale(1.6);
+  }
+}
+
+/* ── Phone only (≤ 768px) — tighter padding ───────────────── */
+@media (max-width: 768px) {
+  .coverage-slide__content {
+    padding: calc(var(--space-4) + env(safe-area-inset-top, 0px))
+             var(--container-pad)
+             var(--space-3);
+  }
+
+  .coverage-progress {
+    padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .coverage-slide__title {
+    font-size: clamp(var(--text-xl), 6vw, var(--text-3xl));
+  }
+
+  .coverage-slide__text {
+    font-size: var(--text-xs);
+  }
+}
+
+/* ── Tablet (769px – 1024px) — slightly more breathing room ── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .coverage-slide__content {
+    padding: var(--space-6) var(--container-pad) var(--space-5);
+    gap: var(--space-3);
+  }
+
+  .coverage-slide__title {
+    font-size: clamp(var(--text-3xl), 5vw, var(--text-4xl));
+  }
+
+  .coverage-slide__text {
+    font-size: var(--text-base);
+  }
+
+  /* Slightly larger dots on tablet */
+  .coverage-progress__label {
+    width: 10px;
+    height: 10px;
+    min-width: 10px;
+  }
+}
+
+/* ── Reduced motion — disable hijack ──────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .coverage-track {
+    height: auto;
+  }
+  .coverage-sticky {
+    position: static;
+    height: auto;
+  }
+  .coverage-slide {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .coverage-slide__title,
+  .coverage-slide__text {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+/* ── Reduced motion — disable hijack ──────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .coverage-track {
+    height: auto;
+  }
+  .coverage-sticky {
+    position: static;
+    height: auto;
+  }
+  .coverage-slide {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .coverage-slide__title,
+  .coverage-slide__text {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

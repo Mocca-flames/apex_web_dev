@@ -9,13 +9,16 @@
  *    legitimately in the 0-to-1 range (track is inside the viewport).
  *  - Keyboard access only when the user is genuinely inside the track.
  *
- * Fix (pointer-events / inert):
- *  - setStickyVisible() is the single source of truth for show/hide.
- *  - When hidden: pointer-events:none (CSS) + inert attr stop the full-height
- *    sticky panel from intercepting clicks/focus on every other section.
- *  - When visible: inert is removed so the panel is interactive again.
- *  - CSS must pair with this: .coverage-sticky { pointer-events: none }
- *                             .coverage-sticky.is-visible { pointer-events: auto }
+ * Fix — pointer-events / inert:
+ *  setStickyVisible() is the single source of truth for show/hide.
+ *  CSS must pair: .coverage-sticky { pointer-events: none }
+ *                 .coverage-sticky.is-visible { pointer-events: auto }
+ *
+ * Fix — MutationObserver wrong selector:
+ *  Was: section.querySelectorAll('.coverage-progress__labels')  ← the <ol>
+ *  Now: section.querySelectorAll('.coverage-progress__label')   ← the <li>s
+ *  After buildCoverageSlides() fires, label toggling was silently broken
+ *  because the labels NodeList held the container, not the individual items.
  */
 (function () {
   'use strict';
@@ -28,12 +31,12 @@
     var section = document.getElementById('coverage');
     if (!section) return;
 
-    var track    = section.querySelector('.coverage-track');
-    var sticky   = section.querySelector('.coverage-sticky');
-    var slides   = section.querySelectorAll('.coverage-slide');
-    var labels   = section.querySelectorAll('.coverage-progress__label');
-    var fillEl   = document.getElementById('js-coverage-fill');
-    var dotEl    = document.getElementById('js-coverage-dot');
+    var track  = section.querySelector('.coverage-track');
+    var sticky = section.querySelector('.coverage-sticky');
+    var slides = section.querySelectorAll('.coverage-slide');
+    var labels = section.querySelectorAll('.coverage-progress__label');   /* fix: was .coverage-progress__labels */
+    var fillEl = document.getElementById('js-coverage-fill');
+    var dotEl  = document.getElementById('js-coverage-dot');
 
     if (!track || !slides.length) {
       if (window.__ApexDebug) console.warn('[coverage] init: missing elements', { track: !!track, slides: slides.length });
@@ -42,10 +45,10 @@
 
     /* ── Visibility helper ────────────────────────────────────────────
      *  Single source of truth for showing/hiding the sticky panel.
-     *  - is-visible  drives CSS opacity/transform (paired with pointer-events
-     *    via the CSS rules described in the file header).
-     *  - inert removes the panel from tab order AND the a11y tree when hidden,
-     *    so screen-readers and keyboard users can't land inside it accidentally.
+     *  - is-visible drives CSS opacity/transform (paired with
+     *    pointer-events via the CSS rules described in the file header).
+     *  - inert removes the panel from tab order and the a11y tree when
+     *    hidden so keyboard/screen-reader users can't land inside it.
      * ─────────────────────────────────────────────────────────────── */
     function setStickyVisible(visible) {
       if (!sticky) return;
@@ -105,10 +108,23 @@
       setActive(targetIndex, false);
     }
 
-    /* ── Re-hide sticky whenever the coverage DOM is mutated ───────── */
+    /* ── Re-hide sticky whenever the coverage DOM is mutated ─────────
+     *
+     *  buildCoverageSlides() (content.js) rebuilds both:
+     *    - .coverage-journey__slides  → new .coverage-slide elements
+     *    - .coverage-progress__labels → new .coverage-progress__label <li>s
+     *
+     *  The MutationObserver refreshes both NodeLists so setActive()
+     *  targets the new elements, then resets to slide 0.
+     *
+     *  Bug fixed: was querying '.coverage-progress__labels' (the <ol>
+     *  container) — now correctly queries '.coverage-progress__label'
+     *  (the individual <li> items).
+     * ─────────────────────────────────────────────────────────────── */
     var mo = new MutationObserver(function () {
       var newSlides = section.querySelectorAll('.coverage-slide');
-      var newLabels = section.querySelectorAll('.coverage-progress__label');
+      var newLabels = section.querySelectorAll('.coverage-progress__label');  /* fix: was .coverage-progress__labels */
+
       if (!newSlides.length) return;
 
       slides = newSlides;
@@ -121,11 +137,6 @@
     mo.observe(section, { childList: true, subtree: true });
 
     /* ── IntersectionObserver ─────────────────────────────────────── */
-    // Ambiguous race: onScroll fires when progress falls inside [0,1]
-    // even if the track is NOT actually a stacking overlay above the page.
-    // `IntersectionObserver` is unambiguous — it fires only when the track
-    // geometry is *confirmed* inside the viewport. The callback uses the
-    // *same* guard flow as onScroll so the two paths stay in sync.
     if ('IntersectionObserver' in window) {
       (function observeTrack() {
         var io = new IntersectionObserver(function (entries) {
@@ -155,6 +166,7 @@
     if (lenis) {
       lenis.on('scroll', onScroll);
     } else {
+      /* Mobile and reduced-motion fallback: native scroll event */
       window.addEventListener('scroll', onScroll, { passive: true });
     }
 
@@ -170,8 +182,7 @@
       }
     });
 
-    /* tabindex stays — inert overrides it when the panel is hidden,
-       so there is no double-management needed. */
+    /* tabindex stays — inert overrides it when the panel is hidden */
     sticky.setAttribute('tabindex', '0');
 
     /* Start hidden — inert set immediately so nothing leaks through
