@@ -265,9 +265,8 @@
 
       slidesHtml +=
         '<div class="coverage-slide" data-index="' + index + '">' +
-          '<div class="coverage-slide__content">' +
+          '<div class="coverage-slide__header">' +
             '<h3 class="coverage-slide__title">' + country.name + '</h3>' +
-            '<p class="coverage-slide__text"><strong>(' + country.status + ')</strong> — ' + descMap[country.name] + '</p>' +
           '</div>' +
           '<div class="coverage-slide__frame">' +
             '<picture>' +
@@ -275,6 +274,7 @@
               '<img class="coverage-slide__map" src="/experiment/' + codeMap[country.name] + '.webp" alt="' + country.name + ' — ' + country.status + '" loading="lazy" decoding="async">' +
             '</picture>' +
           '</div>' +
+          '<p class="coverage-slide__text"><strong>(' + country.status + ')</strong> — ' + descMap[country.name] + '</p>' +
         '</div>';
 
       labelsHtml += '<li class="coverage-progress__label" data-index="' + index + '">' + country.name + '</li>';
