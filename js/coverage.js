@@ -94,7 +94,7 @@
       setStickyVisible(false);
 
       var rect      = track.getBoundingClientRect();
-      var trackSpan = rect.height - window.innerHeight;
+      var trackSpan = rect.height - (window.visualViewport ? window.visualViewport.height : window.innerHeight);
 
       if (trackSpan <= 0) return;
 
@@ -147,7 +147,7 @@
             }
             var topIO    = entry.boundingClientRect.top;
             var heightIO = entry.boundingClientRect.height;
-            var spanIO   = heightIO - window.innerHeight;
+            var spanIO   = heightIO - (window.visualViewport ? window.visualViewport.height : window.innerHeight);
             if (spanIO <= 0) { setStickyVisible(false); return; }
             var p = -topIO / spanIO;
             if (p < 0 || p > 1) { setStickyVisible(false); return; }
@@ -190,7 +190,7 @@
     setStickyVisible(false);
 
     function scrollToSlide(idx) {
-      var trackHeight = track.offsetHeight - window.innerHeight;
+      var trackHeight = track.offsetHeight - (window.visualViewport ? window.visualViewport.height : window.innerHeight);
       if (trackHeight <= 0) return;
       var targetY = track.offsetTop + (idx / (SLIDE_COUNT - 1)) * trackHeight;
       if (lenis) {

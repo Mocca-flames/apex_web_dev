@@ -32,7 +32,7 @@
         fill: !!fill, dotsWrap: !!dotsWrap, lenis: !!lenis,
         trackRect: track.getBoundingClientRect(),
         trackComputedHeight: getComputedStyle(track).height,
-        windowInnerHeight: window.innerHeight
+        windowVisualHeight:  window.visualViewport ? window.visualViewport.height : window.innerHeight
       });
     }
 
@@ -67,8 +67,9 @@
       dot.dataset.index = i;
 
       dot.addEventListener('click', function() {
+        var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
         var trackTop    = track.offsetTop;
-        var trackHeight = track.offsetHeight - window.innerHeight;
+        var trackHeight = track.offsetHeight - vh;
         var targetY     = trackTop + (i / (SERVICE_COUNT - 1)) * trackHeight;
         if (lenis) {
           lenis.scrollTo(targetY, { duration: 1.2 });
@@ -141,15 +142,16 @@
     }
 
     function onScroll() {
+      var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
       var rect      = track.getBoundingClientRect();
-      var trackSpan = rect.height - window.innerHeight;
+      var trackSpan = rect.height - vh;
 
       if (window.__ApexDebug && rect.height > 0) {
         var progressDraft = -rect.top / trackSpan;
         console.log('[services scroll]', {
           rectTop:      rect.top.toFixed(1),
           rectHeight:   rect.height.toFixed(1),
-          innerHeight:  window.innerHeight,
+            innerHeight: window.visualViewport ? window.visualViewport.height : window.innerHeight,
           trackSpan:    trackSpan.toFixed(1),
           progress:     progressDraft.toFixed(4),
           wouldReturn:  trackSpan <= 0 || progressDraft < 0 || progressDraft > 1

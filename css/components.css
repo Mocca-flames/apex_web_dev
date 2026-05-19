@@ -1070,7 +1070,7 @@
 
 .services-track {
   --service-count: 6;
-  height: calc(var(--service-count) * 100vh);
+  height: calc(var(--service-count) * 100svh);
   position: relative;
   background: var(--apex-off-white);
   margin: 0;
@@ -1082,7 +1082,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 100svh;
   display: grid;
   grid-template-columns: 55fr 45fr;
   overflow: hidden;
@@ -1283,13 +1283,13 @@
 
   /* Restore tall scroll space so the hijack fires */
   .services-track {
-    height: calc(var(--service-count) * 100vh);
+    height: calc(var(--service-count) * 100svh);
   }
 
   /* Restore fixed sticky, single-column */
   .services-sticky {
     position: fixed;
-    height: 100vh;
+    height: 100svh;
     grid-template-columns: 1fr;
     display: flex;
     flex-direction: column;
@@ -1422,15 +1422,9 @@
 /* ── Coverage Journey — scroll-hijacked sticky section             */
 /* ───────────────────────────────────────────────────────────────── */
 
-/* Coverage section header (scrolls away naturally) */
-.coverage-journey__header {
-  padding-top: var(--space-20);
-  padding-bottom: var(--space-16);
-}
-
 /* Scroll track: creates the scrollable height */
 .coverage-track {
-  height: calc(8 * 100vh);
+  height: calc(8 * 100svh);
   position: relative;
 }
 
@@ -1440,7 +1434,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 100svh;
   overflow: hidden;
   display: flex;
   align-items: stretch;
@@ -1449,7 +1443,6 @@
   transition: opacity 0.3s;
   z-index: 10;
   isolation: isolate;
-  pointer-events: none; 
 }
 
 .coverage-sticky.is-visible {
@@ -1464,15 +1457,12 @@
   height: 100%;
 }
 
-/* Individual slide */
+/* Individual slide — map fills the viewport */
 .coverage-slide {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-24);
-  padding: var(--space-20);
+  width: 100%;
+  height: 100%;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.6s ease-out;
@@ -1486,70 +1476,67 @@
   z-index: 2;
 }
 
-  .coverage-slide.is-leaving {
-    opacity: 0;
-    transition: opacity 0.4s ease-in;
-    z-index: 1;
-  }
+.coverage-slide.is-leaving {
+  opacity: 0;
+  transition: opacity 0.4s ease-in;
+  z-index: 1;
+}
 
-  /* ── Title block (left of map on desktop) ─────────────────── */
-  .coverage-slide__header {
-    flex: 0 0 auto;
-    z-index: 3;
-  }
+/* ── Map frame: fills viewport, position:relative for text overlay ── */
+.coverage-slide__frame {
+  position: relative;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
 
-  .coverage-slide__title {
-    font-family: 'Barlow Condensed', sans-serif;
-    transform: none;
-  }
+/* Map: cover full frame */
+.coverage-slide__map {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
 
-  .coverage-slide:not(.is-active) .coverage-slide__title {
-    transform: translateY(24px);
-  }
+/* ── Text overlay: glass-morphism card anchored bottom-left of map ── */
+.coverage-slide__text {
+  position: absolute;
+  bottom: var(--space-8);
+  left: var(--space-8);
+  right: auto;
+  max-width: min(340px, calc(100% - var(--space-16)));
+  background: rgba(13, 31, 60, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fff;
+  font-size: var(--text-base);
+  line-height: 1.55;
+  padding: var(--space-4) var(--space-5);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  z-index: 3;
+  transform: translateY(0);
+  opacity: 1;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s,
+              opacity   0.5s ease-out 0.1s;
+}
 
-  /* ── Map frame ─────────────────────────────────────────────── */
-  .coverage-slide__frame {
-    flex: 1;
-    position: relative;
-    height: 72vh;
-    max-height: 680px;
-  }
+.coverage-slide:not(.is-active) .coverage-slide__text {
+  transform: translateY(12px);
+  opacity: 0;
+}
 
-  .coverage-slide__map {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    border-radius: 24px;
-  }
+.coverage-slide__text strong {
+  color: var(--apex-orange);
+  font-weight: 700;
+}
 
-  /* ── Description text — floated as a left-side annotation ───
-     Same visual result as the old .coverage-slide__content wrapper:
-     absolutely positioned, narrow column, entrance/exit animation. */
-  .coverage-slide__text {
-    position: absolute;
-    bottom: var(--space-12);
-    left: var(--space-20);
-    font-size: var(--text-xl);
-    max-width: min(360px, calc(100vw - 160px));
-    z-index: 3;
-    transform: translateY(0);
-    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.05s,
-                opacity   0.6s ease-out 0.05s;
-  }
-
-  .coverage-slide:not(.is-active) .coverage-slide__text {
-    transform: translateY(20px);
-  }
-
-  .coverage-slide__text strong {
-    color: var(--apex-navy);
-    font-weight: 700;
-  }
-
-/* Progress rail */
+/* ── Progress rail — vertical, pinned to left edge ─────────────── */
 .coverage-progress {
   position: absolute;
-  left: var(--space-8);
+  left: 0;
+  padding-left: var(--space-5);
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -1619,34 +1606,24 @@
   transform: translateX(3px);
 }
 
-/* ── Coverage Journey — Mobile & Tablet (scroll-driven sticky)
-   Same hijacked-scroll mechanic as desktop and services.
-   On mobile the vertical progress rail becomes a horizontal
-   dot strip — labels are restyled as dots, JS is unchanged
-   (it already toggles is-active on each label element).
-   ─────────────────────────────────────────────────────────── */
-
-/* ── Shared mobile/tablet base (≤ 1024px) ─────────────────── */
+/* ── Mobile & Tablet (≤ 1024px) — map fills viewport, text overlaid bottom ── */
 @media (max-width: 1024px) {
 
-  /* Restore tall scroll space so the JS hijack fires */
   .coverage-track {
-    height: calc(8 * 100vh); /* mirrors SLIDE_COUNT in coverage.js */
+    height: calc(8 * 100svh);
   }
 
-  /* Restore fixed sticky, full-viewport, single column */
   .coverage-sticky {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+    height: 100svh;
     overflow: hidden;
+    display: flex;
+    align-items: stretch;
   }
 
-  /* Slides container fills remaining space */
   .coverage-journey__slides {
     flex: 1;
     min-height: 0;
@@ -1654,17 +1631,15 @@
     grid-template-areas: 'slide';
   }
 
-  /* Each slide: flex column — title → map → description */
   .coverage-slide {
     grid-area: slide;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    display: block;
+    height: 100svh;
+    width: 100%;
+    overflow: hidden;
     padding: 0;
-    gap: 0;
-    opacity: 0;
-    transition: opacity 0.6s var(--ease-out);
-    pointer-events: none;
+    position: absolute;
+    inset: 0;
   }
 
   .coverage-slide.is-active {
@@ -1672,192 +1647,115 @@
     pointer-events: auto;
   }
 
-  /* ── Header (fixed top bar) ─────────────────────────────── */
-  .coverage-slide__header {
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    padding: var(--space-5) var(--container-pad) var(--space-4);
-    background: var(--apex-white);
-  }
-
-  .coverage-slide__header > * { pointer-events: auto; }
-
-  .coverage-slide__title {
-    position: static;
-    color: var(--apex-navy);
-    text-shadow: none;
-    font-size: clamp(var(--text-2xl), 6vw, var(--text-4xl));
-    margin-bottom: 0;
-    transform: none;
-    opacity: 1;
-  }
-
-  /* Inactive slide title — exits behind header */
-  .coverage-slide:not(.is-active) .coverage-slide__title {
-    transform: translateY(-12px);
-    opacity: 0;
-  }
-
-  /* ── Map frame (flexible middle — limited height so header/footer breathe) ── */
   .coverage-slide__frame {
-    flex: 0 1 auto;
-    min-height: 0;
-    position: relative;
     width: 100%;
-    padding: var(--space-4) var(--container-pad);
-    gap: var(--space-4);
-    max-height: 50%;
+    height: 100%;
+    padding: 0;
+    max-height: none;
+    overflow: hidden;
   }
 
-  /* Map image: only flexes within its frame — does NOT fill remaining space */
   .coverage-slide__map {
-    position: relative;
     width: 100%;
-    flex: 1 1 0;
-    min-height: 0;
-    max-height: 100%;
-    aspect-ratio: 9 / 16;
-    object-fit: contain;
+    height: 100%;
+    object-fit: cover;
     object-position: center;
-    border-radius: 16px;
-    background: var(--apex-stone);
-    opacity: 0;
-    transition: opacity 0.6s var(--ease-out);
+    display: block;
+    aspect-ratio: unset;
+    opacity: 1;
   }
 
   .coverage-slide.is-active .coverage-slide__map {
     opacity: 1;
   }
 
-  /* ── Description (fixed bottom area) ─────────────────────── */
+  /* Gradient scrim: readable text over any map */
   .coverage-slide__text {
-    flex-shrink: 0;
-    position: static;
-    color: var(--apex-charcoal);
-    text-shadow: none;
-    background: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    background: linear-gradient(
+      to top,
+      rgba(5, 15, 35, 0.92) 0%,
+      rgba(5, 15, 35, 0.6) 55%,
+      transparent 100%
+    );
+    color: #fff;
     font-size: var(--text-sm);
     line-height: 1.6;
-    margin: 0;
-    padding: var(--space-4) var(--container-pad) var(--space-6);
+    padding: 64px var(--container-pad) 36px;
+    max-width: 100%;
     border-radius: 0;
-    transform: none;
+    border: none;
+    backdrop-filter: none;
+    transform: translateY(0);
     opacity: 1;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s,
+                opacity 0.5s ease-out 0.1s;
   }
 
   .coverage-slide:not(.is-active) .coverage-slide__text {
-    transform: translateY(8px);
+    transform: translateY(16px);
     opacity: 0;
   }
 
   .coverage-slide__text strong {
-    color: var(--apex-orange);
+    color: #ff8c42;
+    font-weight: 700;
   }
 
-  /* ── Progress: horizontal dot strip at bottom (tablet 768–1024px)
-     On strict mobile (≤ 768px) the rail entirely — text and
-     image have room to breathe without competing elements. */
+  /* Hide full vertical rail on mobile — text anchors bottom of the map */
+  .coverage-progress { display: none !important; }
+}
 
-  /* Horizontal dot strip — tablet only */
-  @media (min-width: 769px) and (max-width: 1024px) {
-    .coverage-progress {
-      flex-shrink: 0;
-      flex-direction: row;
-      width: 100%;
-      height: auto;
-      padding: var(--space-3) var(--container-pad);
-      align-items: center;
-      justify-content: center;
-      background: var(--apex-white);
-      gap: 0;
-    }
-
-    /* Hide vertical rail, fill bar and moving dot */
-    .coverage-progress__rail,
-    .coverage-progress__fill,
-    #js-coverage-dot {
-      display: none;
-    }
-
-    .coverage-progress__labels {
-      display: flex;
-      flex-direction: row;
-      gap: var(--space-2);
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .coverage-progress__label {
-      width: 8px;
-      height: 8px;
-      min-width: 8px;
-      border-radius: 50%;
-      background: var(--apex-stone);
-      font-size: 0;
-      line-height: 0;
-      overflow: hidden;
-      cursor: default;
-      transition:
-        background 0.3s var(--ease-out),
-        transform 0.3s var(--ease-spring);
-    }
-
-    .coverage-progress__label.is-active {
-      background: var(--apex-orange);
-      transform: scale(1.6);
-    }
+/* ── Tablet only (769–1024px): frosted pill, centered dot strip ── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .coverage-progress {
+    display: flex !important;
+    position: fixed;
+    bottom: var(--space-5);
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: row;
+    height: auto;
+    width: auto;
+    background: rgba(13, 31, 60, 0.55);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: var(--space-2) var(--space-4);
+    gap: var(--space-3);
+    align-items: center;
+    z-index: 20;
   }
 
-  /* ═══ STRICT MOBILE (≤ 768px) — no progress at all ═══ */
-  @media (max-width: 768px) {
-    .coverage-progress { display: none !important; }
-  }
+  .coverage-progress__rail,
+  .coverage-progress__fill,
+  #js-coverage-dot { display: none; }
 
-  /* Labels list: horizontal row of dots */
   .coverage-progress__labels {
-    display: flex;
     flex-direction: row;
     gap: var(--space-2);
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    align-items: center;
-    justify-content: center;
   }
 
-  /* Each label: collapse text, render as a dot */
   .coverage-progress__label {
     width: 8px;
     height: 8px;
-    min-width: 8px;
     border-radius: 50%;
-    background: var(--apex-stone);
-    font-size: 0;           /* hides country name text */
-    line-height: 0;
+    background: rgba(255, 255, 255, 0.35);
+    font-size: 0;
     overflow: hidden;
-    cursor: default;
-    transition:
-      background 0.3s var(--ease-out),
-      transform 0.3s var(--ease-spring);
+    transition: background 0.3s, transform 0.3s;
   }
 
   .coverage-progress__label.is-active {
     background: var(--apex-orange);
-    transform: scale(1.6);
+    transform: scale(1.5);
   }
 }
 
-/* ── Coverage Journey — Mobile & Tablet (scroll-driven sticky)
-    Same hijacked-scroll mechanic as desktop.
-    Text content visible — map inset with breathing room.
-    ─────────────────────────────────────────────────────────── */
-
-/* ── Reduced motion — disable hijack, restore text ─────────── */
+/* ── Reduced motion — disable hijack, all slides visible ─────────── */
 @media (prefers-reduced-motion: reduce) {
   .coverage-track  { height: auto; }
   .coverage-sticky { position: static; height: auto; }

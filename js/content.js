@@ -248,14 +248,14 @@
     countries.forEach(function(country, index) {
       // Build description based on country
       var descMap = {
-        'South Africa': '(Hub) — Johannesburg dispatch HQ, 24/7 monitoring, border agents at Beit Bridge & Tlokweng',
-        'Zimbabwe': '(Active) — Beit Bridge crossing, ZIMRA clearance handled, 4–10h average',
-        'Zambia': '(Active) — Chirundu, Kazungula & Kasumbalesa crossings, ZRA + COMESA, 2–12h',
-        'DRC': '(Specialist) — Kasumbalesa border, OGEFREM clearance, French-speaking agents, 6–24h',
-        'Botswana': '(Active) — Tlokweng & Kazungula, BURS clearance, 2–4h fastest corridor',
-        'Malawi': '(Active) — Mchinji border, MRA clearance with COMESA pre-approval, 4–8h',
-        'Tanzania': '(Active) — Dar es Salaam corridor, long-haul JHB–port route, 3–7 days',
-        'Mozambique': '(Active) — Maputo corridor via Lebombo, 4–8h clearance'
+        'South Africa': 'Johannesburg dispatch HQ, 24/7 monitoring, border agents at Beit Bridge & Tlokweng',
+        'Zimbabwe': 'Beit Bridge crossing, ZIMRA clearance handled, 4–10h average',
+        'Zambia': 'Chirundu, Kazungula & Kasumbalesa crossings, ZRA + COMESA, 2–12h',
+        'DRC': 'Kasumbalesa border, OGEFREM clearance, French-speaking agents, 6–24h',
+        'Botswana': 'Tlokweng & Kazungula, BURS clearance, 2–4h fastest corridor',
+        'Malawi': 'Mchinji border, MRA clearance with COMESA pre-approval, 4–8h',
+        'Tanzania': 'Dar es Salaam corridor, long-haul JHB–port route, 3–7 days',
+        'Mozambique': 'Maputo corridor via Lebombo, 4–8h clearance'
       };
 
       var codeMap = {
@@ -265,16 +265,13 @@
 
       slidesHtml +=
         '<div class="coverage-slide" data-index="' + index + '">' +
-          '<div class="coverage-slide__header">' +
-            '<h3 class="coverage-slide__title">' + country.name + '</h3>' +
-          '</div>' +
           '<div class="coverage-slide__frame">' +
             '<picture>' +
               '<source media="(max-width: 768px)" srcset="/country_mobile/' + codeMap[country.name] + '.webp" type="image/webp">' +
               '<img class="coverage-slide__map" src="/experiment/' + codeMap[country.name] + '.webp" alt="' + country.name + ' — ' + country.status + '" loading="lazy" decoding="async">' +
             '</picture>' +
+            '<p class="coverage-slide__text"><strong>' + country.status + '</strong> — ' + descMap[country.name] + '</p>' +
           '</div>' +
-          '<p class="coverage-slide__text"><strong>(' + country.status + ')</strong> — ' + descMap[country.name] + '</p>' +
         '</div>';
 
       labelsHtml += '<li class="coverage-progress__label" data-index="' + index + '">' + country.name + '</li>';
