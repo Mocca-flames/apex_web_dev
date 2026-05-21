@@ -8,7 +8,7 @@
 
   const CONTENT_DESKTOP = '/data/content.json';
   const CONTENT_MOBILE = '/data/content_mobile.json';
-  const MOBILE_BREAKPOINT = 768; // px — matches CSS breakpoint
+  const MOBILE_BREAKPOINT = 1024; // px — matches CSS/services.js breakpoint
 
   let apexContent = null;
   var contentPromise;
@@ -151,9 +151,11 @@
   function buildServicesPanels() {
     var panelsContainer = document.getElementById('js-service-panels');
     var dotsContainer = document.getElementById('js-progress-dots');
+    console.log('[content] buildServicesPanels', { panelsContainer: !!panelsContainer, dotsContainer: !!dotsContainer });
     if (!panelsContainer) return;
 
     var services = get('home.servicesSection.services');
+    console.log('[content] buildServicesPanels services keys', services ? Object.keys(services) : 'NULL');
     if (!services || !Object.keys(services).length) return;
 
     var panelsHtml = '';
@@ -267,7 +269,7 @@
         '<div class="coverage-slide" data-index="' + index + '">' +
           '<div class="coverage-slide__frame">' +
             '<picture>' +
-              '<source media="(max-width: 768px)" srcset="/country_mobile/' + codeMap[country.name] + '.webp" type="image/webp">' +
+              '<source media="(max-width: 1024px)" srcset="/country_mobile/' + codeMap[country.name] + '.webp" type="image/webp">' +
               '<img class="coverage-slide__map" src="/experiment/' + codeMap[country.name] + '.webp" alt="' + country.name + ' — ' + country.status + '" loading="lazy" decoding="async">' +
             '</picture>' +
             '<p class="coverage-slide__text"><strong>' + country.status + '</strong> — ' + descMap[country.name] + '</p>' +
@@ -333,12 +335,12 @@
         { label: 'Border Documentation', href: '/border-clearance.html#documentation' },
         { label: 'Customs Clearance', href: '/border-clearance.html' },
         { label: 'Route Planning', href: '/services.html#route-planning' },
-        { label: 'Transporter Network', href: '/fleet.html' },
-        { label: 'Real-Time Monitoring', href: '/tracking.html' }
+        { label: 'Transporter Network', href: '/fleet.html' }
       ];
       servicesContainer.innerHTML = serviceLinks.map(function(link) {
         return '<a href="' + link.href + '" class="footer__link">' + link.label + '</a>';
       }).join('');
+      servicesContainer.innerHTML += '<a href="/about.html" class="footer__link">About Us</a>';
     }
 
     // Contact column
@@ -374,6 +376,169 @@
     });
   }
 
+  function buildAbout() {
+    var about = get('about');
+    if (!about) return;
+    var container = document.getElementById('about-overview');
+    // camera call: ensure hero image element exists and set src safely
+    if (about.hero && about.hero.image && container) {
+      var img = container.querySelector('img');
+      if (!img) {
+        img = document.createElement('img');
+        img.alt = (about.hero && about.hero.alt) ? about.hero.alt : '';
+        img.loading = 'lazy';
+        container.appendChild(img);
+      }
+      img.src = about.hero.image;
+    }
+
+    // ── company overview ──────────────────────────────────────────
+    var overviewEl = document.getElementById('about-overview');
+    if (overviewEl && about.companyOverview && about.companyOverview.body) {
+      overviewEl.innerHTML =
+        '<div class="section-header" style="margin-bottom:1rem;">' +
+          '<span class="section-header__eyebrow" data-content="about.companyOverview.title"></span>' +
+          '<h2 class="section-header__title" data-content="about.companyOverview.title" style="--stagger-index:0"></h2>' +
+        '</div>' +
+        '<p style="font-size:1.05rem; line-height:1.75; color:var(--text-secondary); max-width:700px;" data-content="about.companyOverview.body"></p>';
+    }
+
+
+    // ── core services ─────────────────────────────────────────────
+    var servicesEl = document.getElementById('about-services');
+    if (servicesEl && about.coreServices && about.coreServices.list) {
+      var sHtml = '<h3 class="section-header__title" style="--stagger-index:0" data-content="about.coreServices.title"></h3>' +
+        '<div class="services-grid">';
+      about.coreServices.list.forEach(function(svc, i) {
+        sHtml +=
+          '<article class="glass-card" style="--stagger-index:' + (i + 1) + '">' +
+            '<span class="glass-card__icon">?</span>' +
+            '<h4 class="glass-card__title" data-content="about.coreServices.list[' + i + '].name"></h4>' +
+            '<p class="glass-card__body" data-content="about.coreServices.list[' + i + '].description"></p>' +
+          '</article>';
+      });
+      sHtml += '</div>';
+      servicesEl.innerHTML = sHtml;
+    }
+
+
+    // ── geographic footprint ──────────────────────────────────────
+    var countriesEl = document.getElementById('about-countries');
+    if (countriesEl && about.geographicFootprint && about.geographicFootprint.countries) {
+      var hdr = about.geographicFootprint.title || 'Where We Operate';
+      countriesEl.innerHTML =
+        '<div class="section-header" style="margin-bottom:1.5rem;">' +
+          '<h2 class="section-header__title" style="--stagger-index:0">' + hdr + '</h2>' +
+        '</div>' +
+        '<div class="geo-grid">' +
+          about.geographicFootprint.countries.map(function(c, i) {
+            return (
+              '<div class="geo-card" style="--stagger-index:' + (i + 1) + '">' +
+                '<span class="geo-card__name" data-content="about.geographicFootprint.countries[' + i + '].name"></span>' +
+                '<span class="geo-card__hubs" data-content="about.geographicFootprint.countries[' + i + '].hubs"></span>' +
+              '</div>'
+            );
+          }).join('') +
+        '</div>';
+    }
+
+
+    // ── why Apex (guarantees) ─────────────────────────────────────
+    var whyEl = document.getElementById('about-why-apex');
+    if (whyEl && about.whyApex && about.whyApex.guarantees) {
+      var hdr2 = about.whyApex.title || 'Why Choose Apex';
+      whyEl.innerHTML =
+        '<div class="section-header" style="margin-bottom:1.5rem;">' +
+          '<h2 class="section-header__title" style="--stagger-index:0">' + hdr2 + '</h2>' +
+        '</div>' +
+        '<div class="guarantees-grid">' +
+          about.whyApex.guarantees.map(function(g, i) {
+            return (
+              '<div class="glass-card guarantee-card" style="--stagger-index:' + (i + 1) + '">' +
+                '<span class="guarantee-card__check" aria-hidden="true">&#10003;</span>' +
+                '<p class="glass-card__body" style="margin:0;" data-content="about.whyApex.guarantees[' + i + ']"></p>' +
+              '</div>'
+            );
+          }).join('') +
+        '</div>';
+    }
+
+
+    // ── process timeline ──────────────────────────────────────────
+    var processEl = document.getElementById('about-process');
+    if (processEl && about.process && about.process.steps) {
+      var steps = about.process.steps;
+      processEl.innerHTML =
+        '<div class="section-header" style="margin-bottom:1.5rem;">' +
+          '<h2 class="section-header__title" data-content="about.process.title" style="--stagger-index:0"></h2>' +
+        '</div>' +
+        '<div class="timeline">' +
+          '<div class="timeline__track"><div class="timeline__track-fill"></div></div>' +
+          steps.map(function(step, i) {
+            var label = step.replace(/\s*—\s*.*/, '').trim() || step;
+            var body  = step.replace(/^.*?—\s*/, '').trim() || '';
+            return (
+              '<div class="timeline__step" style="--stagger-index:' + (i + 1) + '">' +
+                '<div class="timeline__node">' + (i + 1) + '</div>' +
+                '<span class="timeline__label">' + label + '</span>' +
+                '<span class="timeline__sub">' + body + '</span>' +
+              '</div>'
+            );
+          }).join('') +
+        '</div>';
+    }
+
+
+    // ── stats ─────────────────────────────────────────────────────
+    var statsEl = document.getElementById('about-stats');
+    if (statsEl && about.stats && about.stats.length) {
+      statsEl.innerHTML =
+        '<div class="trust-bar">' +
+          '<div class="trust-bar__grid">' +
+            about.stats.map(function(s, i) {
+              return (
+                '<div class="trust-bar__item" style="--stagger-index:' + (i + 1) + '">' +
+                  '<span class="trust-bar__number" data-content="about.stats[' + i + '].value"></span>' +
+                  '<span class="trust-bar__label" data-content="about.stats[' + i + '].label"></span>' +
+                '</div>'
+              );
+            }).join('') +
+          '</div>' +
+        '</div>';
+    }
+
+
+    // ── CTA ───────────────────────────────────────────────────────
+    var ctaEl = document.getElementById('about-cta');
+    if (ctaEl && about.cta) {
+      var btnLbl = about.cta.button && about.cta.button.label ? about.cta.button.label : 'Contact Us';
+      var btnHref = about.cta.button && about.cta.button.href ? about.cta.button.href : '/contact.html';
+      var ctaHeading = about.cta.heading || '';
+      var ctaSub     = about.cta.sub     || '';
+      ctaEl.innerHTML =
+        '<div class="cta-banner">' +
+          '<div class="cta-banner__content">' +
+            '<h2 class="cta-banner__title" data-content="about.cta.heading"></h2>' +
+            '<p class="cta-banner__sub" data-content="about.cta.sub"></p>' +
+            '<div class="cta-banner__actions">' +
+              '<a href="' + btnHref + '" class="btn btn-navy" data-content="about.cta.button.label">' +
+                btnLbl +
+              '</a>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+    }
+
+    // ── footer text ───────────────────────────────────────────────
+    var footerEl = document.getElementById('about-footer');
+    if (footerEl && about.footer) {
+      footerEl.innerHTML = '<p class="about-footer__text" data-content="about.footer"></p>';
+    }
+
+    injectSimpleContent(); // resolve any data-content markers injected above
+  }
+
+
   function buildAll() {
     buildNav();
     buildTicker();
@@ -384,14 +549,63 @@
     buildPrinciples();
     buildTechBannerPills();
     buildFooter();
+    buildAbout();
     injectSimpleContent();
 
-    if (window.__ApexDebug) {
-      console.log('[content] buildAll complete', {
-        panels: document.querySelectorAll('.services-panel').length,
-        images: document.querySelectorAll('.services-image').length,
-        slides: document.querySelectorAll('.coverage-slide').length
-      });
+    console.log('[content] buildAll complete', {
+      panels: document.querySelectorAll('.services-panel').length,
+      images: document.querySelectorAll('.services-image').length,
+      slides: document.querySelectorAll('.coverage-slide').length
+    });
+
+    /* ── Debug overlay: ?debug=1 URL param ─────────────────────────────────
+     * Always-on diagnostics. Step 1 (t=300ms) — after DOM/build.
+     * Step 2 (t=1200ms) — after CSS transitions have settled.
+     * Remove before production. */
+    if (('' + window.location.search).indexOf('debug=1') !== -1) {
+      setTimeout(function () {
+        var svcSticky = document.querySelector('.services-sticky');
+        if (!svcSticky) return;
+        console.group('[services] DEBUG SNAPSHOT t=300ms');
+
+        /* dump sticky container */
+        var ss = getComputedStyle(svcSticky);
+        console.info('STICKY container:');
+        'display,position,top,left,width,height,opacity,pointerEvents,zIndex,isolation,overflow,visibility,backgroundColor'.split(',').forEach(function(k){
+          console.log('  '+k+':', ss[k]);
+        });
+        console.log('  is-visible:', svcSticky.classList.contains('is-visible'));
+        console.log('  inert:', svcSticky.hasAttribute('inert'));
+        console.log('  classList:', Array.from(svcSticky.classList).join(', '));
+
+        /* dump parent chain */
+        console.info('PARENT chain:');
+        var p = svcSticky.parentElement;
+        while (p && p !== document.body) {
+          var ps = getComputedStyle(p);
+          console.log('  '+p.tagName+'.'+(p.className||'').substring(0,50),
+            'op='+ps.opacity,'zi='+ps.zIndex,'pos='+ps.position,'disp='+ps.display);
+          p = p.parentElement;
+        }
+
+        console.info('PANELS:');
+        document.querySelectorAll('.services-panel').forEach(function(el,i){
+          var s=getComputedStyle(el);
+          console.log('  ['+i+'] active='+el.classList.contains('is-active')+
+            ' op='+s.opacity+' disp='+s.display+' vis='+s.visibility+
+            ' h='+s.height+' kids='+el.children.length+
+            ' text(40)="'+el.textContent.trim().substring(0,40)+'"');
+        });
+
+        console.groupEnd();
+
+        /* step 2: after CSS transitions are done */
+        setTimeout(function () {
+          var s2 = getComputedStyle(svcSticky);
+          console.info('[services] DEBUG FINAL t=1200ms: sticky op='+s2.opacity+' disp='+s2.display+
+            ' is_visible='+svcSticky.classList.contains('is-visible'));
+        }, 900);
+      }, 300);
     }
 
     // Dispatch event for any modules waiting

@@ -19,10 +19,10 @@
       "links": [
         { "label": "Home", "href": "/" },
         { "label": "Services", "href": "/services.html" },
+        { "label": "About Us", "href": "/about.html" },
         { "label": "Border Clearance", "href": "/border-clearance.html" },
         { "label": "Fleet", "href": "/fleet.html" },
-        { "label": "Contact", "href": "/contact.html" },
-        { "label": "Track Your Load", "href": "/tracking.html" }
+        { "label": "Contact", "href": "/contact.html" }
       ],
       "cta": { "label": "WhatsApp Us →", "href": "/contact.html" },
       "mobileFooter": {
@@ -437,7 +437,7 @@
       "sub": "Enter your load reference number below.",
       "inputLabel": "Load Reference",
       "placeholder": "e.g. APX-2026-004821",
-      "buttonLabel": "Track →"
+      "buttonLabel": "Track ->"
     },
     "states": {
       "transit": {
@@ -455,14 +455,108 @@
         "status": "DELIVERED ✓",
         "deliveredTo": "[Consignee name]",
         "deliveredAt": "[Date & time]",
-        "podLink": "Download Proof of Delivery →"
+        "podLink": "Download Proof of Delivery ->"
       },
       "notFound": {
         "status": "LOAD NOT FOUND",
         "message": "Double‑check the reference on your booking confirmation, or contact our dispatch team directly.",
-        "cta": "Contact Dispatch → WhatsApp 072 937 7143"
+        "cta": "Contact Dispatch -> WhatsApp 072 937 7143"
       }
     }
+  },
+
+  "about": {
+    "hero": {
+      "eyebrow": "About Apex Transport Group",
+      "heading": "Proudly South African — Pan‑African logistics operator",
+      "sub": "Reg No: 2025/789240/07 | Head Office: Midrand, Gauteng",
+      "image": "webp/about-desktop.webp",
+      "alt": "Apex fleet on African corridor"
+    },
+    "companyOverview": {
+      "title": "Company Overview",
+      "body": "Apex Transport Group has grown exponentially from a domestic heavy‑commodity mover into a fully‑fledged pan‑African logistics operator. We specialise in end‑to‑end movement of bulk and heavy cargo across Southern and Central Africa, connecting industry, mines, and commerce with reliable, hands‑on transport solutions.\n\nOur model is built on one simple principle: every load must move — no excuses. Whether a shipment originates at a South African port or a remote Congolese mine, Apex takes ownership of the entire journey: finding the right truck, preparing border documentation, navigating customs, planning optimal routes, and monitoring progress in real time until safe delivery is confirmed."
+  },
+    "coreServices": {
+      "title": "Core Services",
+      "list": [
+        {
+          "name": "Freight Brokerage",
+          "description": "Vetted network of owner‑operators and fleet carriers handling copper cathodes, cobalt, manganese, coal, chrome, fertiliser, and general bulk goods. Rate negotiation, carrier contracting, load confirmation, dispatch, and real‑time status reporting."
+        },
+        {
+          "name": "International Border and Customs Management",
+          "description": "Full administrative chain at every crossing — export/import docs, customs clearance across SA, Zimbabwe, Zambia, DRC, Malawi, Botswana, transit permits, dangerous goods declarations, liaison with border agencies."
+        },
+        {
+          "name": "Route Planning and Optimisation",
+          "description": "Mapping safest, fastest, most fuel‑efficient corridors factoring in border delays, road conditions, and security. Real‑time re‑routing when issues arise."
+        }
+      ]
+    },
+    "geographicFootprint": {
+      "title": "Geographic Footprint",
+      "countries": [
+        { "name": "South Africa", "hubs": "Durban (port), Johannesburg (warehousing), Pretoria (HQ), Witbank (coal), Steelpoort (chrome/PGMs), Richards Bay (coal terminal), Kathu (iron ore), Polokwane (northern gateway)" },
+        { "name": "DRC", "hubs": "Katanga and Lualaba provinces — Mutanda, Tenke Fungurume, Kamoto, Ruashi, Kamoa‑Kakula, Kipushi, Kibali gold. Corridors: Lubumbashi to Kasumbalesa to Zambia, Kolwezi export, Kinshasa, Goma/Butembo." },
+        { "name": "Zimbabwe", "hubs": "Beit Bridge, Forbes/Mutare, Chirundu borders; Great Dyke chrome/platinum/gold; Harare and Bulawayo distribution; tobacco season logistics." },
+        { "name": "Zambia", "hubs": "Copperbelt (Lusaka, Ndola, Kitwe, Chingola) — key link between DRC and SA ports. Kasumbalesa border (busiest crossing)." },
+        { "name": "Malawi", "hubs": "Blantyre and Lilongwe — agricultural exports (tobacco, tea, sugar) and mining inputs via Tete (Mozambique) and Mchinji (Zambia)." },
+        { "name": "Botswana", "hubs": "Jwaneng/Orapa diamonds, Morupule coal, soda ash. Trans‑Kalahari corridor, Gaborone and Francistown hubs." }
+      ]
+    },
+    "whyApex": {
+      "title": "Why Choose Apex Transport Group",
+      "guarantees": [
+        "Every load matched with a compliant, vetted carrier",
+        "Border documentation prepared accurately in advance — no preventable delays",
+        "Customs managed through trusted agent relationships across all six countries",
+        "Real‑time communication with clients throughout transit",
+        "Contingency planning activated immediately for any en‑route issue",
+        "Dedicated operations contact assigned to each shipment"
+      ]
+    },
+    "process": {
+      "title": "How It Works — The Apex Process",
+      "steps": [
+        "Client Enquiry — Share load details, origin, destination, timeline.",
+        "Carrier Sourcing — Match right vehicle (flat‑deck, side‑tipper, tanker, lowbed, container).",
+        "Documentation Preparation — Export permits, customs entries, transit docs, border clearances before departure.",
+        "Dispatch and Route Briefing — Driver fully briefed on route, borders, waypoints, rest stops, emergency contacts.",
+        "Border Management — Our agents manage customs at every post to avoid delays.",
+        "Real‑Time Monitoring — GPS tracking, driver contact, regular status updates.",
+        "Delivery Confirmation — Proof of delivery collected, shipment file closed."
+      ]
+    },
+    "network": {
+      "title": "Network and Partnerships",
+      "partners": [
+        "Vetted fleet owners across SA, Zambia, Zimbabwe",
+        "Licensed customs clearing agents at all major border posts",
+        "Mining procurement teams in DRC Copperbelt",
+        "Port authority contacts — Durban and Richards Bay",
+        "Government and regulatory connections for documentation",
+        "Emergency transport for time‑critical shipments"
+      ]
+    },
+    "stats": [
+      { "label": "Trucks in network", "value": "120+" },
+      { "label": "Vehicle classes", "value": "4" },
+      { "label": "GPS tracked", "value": "100%" },
+      { "label": "Average dispatch", "value": "48h" }
+    ],
+    "cta": {
+      "heading": "Need a truck for your load?",
+      "sub": "Same‑day response. 24/7 dispatch.",
+      "button": { "label": "Request Truck", "href": "/contact.html" },
+      "contact": {
+        "phone": "072 937 7143",
+        "whatsapp": "072 937 7143",
+        "email": "evah@apextransportgroup.co.za",
+        "website": "www.apextransportgroup.co.za"
+      }
+    },
+    "footer": "Reliable Loads, Reliable Reach. — Apex Transport Group (Pty) Ltd | Operating 24/7"
   },
 
   "seo": {
@@ -471,6 +565,7 @@
     "border":      { "title": "Border Clearance Excellence – 8 Countries – Apex Transport", "description": "Bonded carrier status. Ground agents at Beit Bridge, Kasumbalesa, Chirundu, Kazungula. We clear borders – every time." },
     "fleet":       { "title": "Heavy Haulage Fleet – Box Trucks to Long‑Haul Specialists", "description": "GPS‑tracked fleet built for African roads. Cross‑border ready, bulk cargo, verified partners. 48h average dispatch." },
     "contact":     { "title": "Get a Quote – WhatsApp Same‑Day Response – Apex Transport", "description": "Call or WhatsApp 072 937 7143. Request a quote for your corridor load. South Africa‑based, 24/7 dispatch." },
+    "about": { "title": "About Apex Transport Group – Proudly South African", "description": "Pan‑African cross‑border freight specialists. End‑to‑end logistics across Southern and Central Africa. Reg No: 2025/789240/07." },
     "tracking":    { "title": "Track Your Load – Real‑Time Border Updates", "description": "Enter your load reference to see current location, border status, and ETA. Updating every hour." }
   },
 

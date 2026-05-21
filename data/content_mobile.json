@@ -19,10 +19,10 @@
       "links": [
         { "label": "Home", "href": "/" },
         { "label": "Services", "href": "/services.html" },
+        { "label": "About Us", "href": "/about.html" },
         { "label": "Clearance", "href": "/border-clearance.html" },
         { "label": "Fleet", "href": "/fleet.html" },
-        { "label": "Contact", "href": "/contact.html" },
-        { "label": "Track", "href": "/tracking.html" }
+        { "label": "Contact", "href": "/contact.html" }
       ],
       "cta": { "label": "WhatsApp Us", "href": "https://wa.me/27729377143" },
       "mobileFooter": {
@@ -237,7 +237,7 @@
       },
       {
         "title": "Tracking",
-        "description": "Hands‑on oversight from A to B.",
+         "description": "Hands‑on oversight from A to B.",
         "keyBenefit": "Proactive problem solving.",
         "link": "/tracking.html"
       },
@@ -376,7 +376,7 @@
       "border": {
         "status": "CLEARING BORDER",
         "lastUpdate": "Kasumbalesa — Agent active",
-        "note": "Est: 4–6 hrs. You'll be notified."
+        "note": "Est: 4-6 hrs. You'll be notified."
       },
       "delivered": {
         "status": "DELIVERED ✓",
@@ -392,13 +392,103 @@
     }
   },
 
+  "about": {
+    "hero": {
+      "eyebrow": "About Us",
+      "heading": "Africa's hands-on logistics partner",
+      "sub": "Bulk and heavy cargo — from port to mine, no excuses.",
+      "image": "webp/about-mobile.webp",
+      "alt": "Apex truck crossing border"
+    },
+    "companyOverview": {
+      "title": "About Apex Transport Group",
+      "body": "Proudly South African. We move copper, cobalt, coal, chrome and general freight across 6 countries. End-to-end ownership: truck sourcing, border docs, customs, GPS tracking, delivery proof."
+    },
+    "coreServices": {
+      "title": "What We Do",
+      "list": [
+        {
+          "name": "Freight Brokerage",
+          "description": "Vetted network of owner-operators and fleet carriers. Rate negotiation, carrier contracting, load confirmation, dispatch, and real-time status reporting."
+        },
+        {
+          "name": "Border and Customs Management",
+          "description": "Full administrative chain at every crossing — export/import docs, customs clearance across SA, Zimbabwe, Zambia, DRC, Malawi, Botswana, transit permits, and liaison with border agencies."
+        },
+        {
+          "name": "Route Planning",
+          "description": "Mapping the safest, fastest, most fuel-efficient corridors factoring in border delays, road conditions, and security. Real-time re-routing when issues arise."
+        }
+      ]
+    },
+    "geographicFootprint": {
+      "title": "Where We Operate",
+      "countries": [
+        { "name": "South Africa", "hubs": "Midrand (HQ), Johannesburg, Durban (port access)" },
+        { "name": "Zimbabwe", "hubs": "Beit Bridge, Chirundu borders; Harare and Bulawayo distribution" },
+        { "name": "Zambia", "hubs": "Lusaka, Ndola — Copperbelt link; Kasumbalesa border" },
+        { "name": "DRC", "hubs": "Lubumbashi, Kolwezi, Kasumbalesa corridor" },
+        { "name": "Botswana", "hubs": "Gaborone, Francistown; Tlokweng and Kazungula borders" },
+        { "name": "Malawi", "hubs": "Blantyre and Lilongwe — Mchinji border access" }
+      ]
+    },
+    "whyApex": {
+      "title": "Why Choose Apex",
+      "guarantees": [
+        "Every load matched with a compliant, vetted carrier",
+        "Border documentation prepared accurately in advance — no preventable delays",
+        "Customs managed through trusted agent relationships across all six countries",
+        "Real-time communication with you throughout transit",
+        "Dedicated operations contact assigned to each shipment",
+        "Hands-on — we don't walk away"
+      ]
+    },
+    "process": {
+      "title": "How It Works",
+      "steps": [
+        "Tell Us the Load",
+        "We Find the Truck",
+        "Docs and Border Prep",
+        "24/7 Tracking",
+        "Safe Delivery"
+      ]
+    },
+    "network": {
+      "title": "Our Network",
+      "partners": [
+        "Vetted fleet owners across SA, Zambia, Zimbabwe",
+        "Licensed customs clearing agents at all major border posts",
+        "Port authority contacts — Durban",
+        "24/7 emergency transport for time-critical shipments"
+      ]
+    },
+    "stats": [
+      { "label": "Trucks", "value": "120+" },
+      { "label": "Countries", "value": "6" },
+      { "label": "Tracked", "value": "100%" },
+      { "label": "Dispatch", "value": "48h" }
+    ],
+    "cta": {
+      "heading": "Need a truck?",
+      "sub": "WhatsApp us — reply within the hour",
+      "button": { "label": "Tap to Chat", "href": "https://wa.me/27729377143" },
+      "contact": {
+        "phone": "072 937 7143",
+        "whatsapp": "072 937 7143",
+        "email": "dispatch@apextransport.co.za",
+        "website": "www.apextransport.co.za"
+      }
+    },
+    "footer": "Hands-on logistics across Southern and Central Africa. Every load moves — no excuses."
+  },
+
   "seo": {
     "home": { "title": "Apex Transport – Cross Borders. No Excuses.", "description": "Cross‑border freight across 8 African countries. 24/7 tracking, customs clearance. Get a quote." },
     "services": { "title": "Freight Services – Apex Transport", "description": "Border docs, customs, routing, live tracking. We own the process." },
     "border": { "title": "Border Clearance – Apex Transport", "description": "Bonded carrier. Ground agents at major posts. We clear borders fast." },
     "fleet": { "title": "Fleet & Haulage – Apex Transport", "description": "GPS‑tracked fleet for African roads. Box trucks to bulk cargo." },
     "contact": { "title": "Contact & Quotes – Apex Transport", "description": "WhatsApp 072 937 7143. 24/7 dispatch, same-day quotes." },
-    "tracking": { "title": "Track Load – Apex Transport", "description": "Live GPS and border status updates." }
+    "about": { "title": "About – Apex Transport", "description": "Pan‑African freight specialists. SA‑based, 8 countries, no excuses." }
   },
 
   "microcopy": {
