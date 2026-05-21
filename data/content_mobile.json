@@ -17,12 +17,11 @@
     },
     "nav": {
       "links": [
-        { "label": "Home", "href": "/" },
         { "label": "Services", "href": "/services.html" },
-        { "label": "About Us", "href": "/about.html" },
         { "label": "Clearance", "href": "/border-clearance.html" },
         { "label": "Fleet", "href": "/fleet.html" },
-        { "label": "Contact", "href": "/contact.html" }
+        { "label": "Contact", "href": "/contact.html" },
+        { "label": "About Us", "href": "/about.html" }
       ],
       "cta": { "label": "WhatsApp Us", "href": "https://wa.me/27729377143" },
       "mobileFooter": {

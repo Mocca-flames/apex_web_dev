@@ -80,9 +80,9 @@
 
 .nav__link {
   font-family: 'Barlow', sans-serif;
-  font-weight: 500;
+  font-weight: 900;
   font-size: var(--text-sm);
-  color: rgba(255, 255, 255, 0.80);
+  color: rgb(255, 255, 255);
   letter-spacing: 0.02em;
   position: relative;
   transition: color var(--dur-base) var(--ease-out);
@@ -1549,7 +1549,7 @@
   position: relative;
   width: 2px;
   height: calc(8 * 36px);
-  background: rgba(13, 31, 60, 0.12);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 2px;
   flex-shrink: 0;
 }
@@ -1559,7 +1559,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  background: var(--apex-navy);
+  background: var(--apex-white);
   border-radius: 2px;
   height: 0%;
   transition: height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
@@ -1572,10 +1572,10 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--apex-navy);
+  background: var(--apex-white);
   top: 0%;
   transition: top 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  box-shadow: 0 0 0 3px var(--apex-off-white), 0 0 0 4px var(--apex-navy);
+  box-shadow: 0 0 0 3px var(--apex-off-white), 0 0 0 4px var(--apex-white);
 }
 
 .coverage-progress__labels {
@@ -1593,7 +1593,7 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: rgba(13, 31, 60, 0.32);
+  color: var(--apex-muted);
   height: 36px;
   display: flex;
   align-items: center;
@@ -1602,8 +1602,10 @@
 }
 
 .coverage-progress__label.is-active {
-  color: var(--apex-navy);
+  color: var(--apex-orange-hot);
   transform: translateX(3px);
+  font-weight: 900;
+  font-size: 20px;
 }
 
 /* ── Mobile & Tablet (≤ 1024px) — map fills viewport, text overlaid bottom ── */

@@ -22,7 +22,9 @@
 
       var contentPromise = window.apexContentReady || Promise.resolve();
 
-     window.tryInitLenis().then(function(lenis) {
+     var tryInitLenis = window.tryInitLenis || function() { return Promise.resolve(null); };
+
+     tryInitLenis().then(function(lenis) {
        initNav();
        initReveal();
        initForm();
@@ -31,11 +33,17 @@
 
      contentPromise.then(function() {
       if (window.__ApexDebug) console.log('[main] contentPromise resolved, window.apexContentReady is:', window.apexContentReady ? 'resolved' : 'missing');
-      initServices();
-      initCoverage();
+      if (typeof window.initServices === 'function') {
+        window.initServices();
+      }
+      if (typeof window.initCoverage === 'function') {
+        window.initCoverage();
+      }
     }).catch(function(err) {
       console.warn('[Main] Content load failed, services may be limited', err);
-      initServices();
+      if (typeof window.initServices === 'function') {
+        window.initServices();
+      }
     });
   }
 

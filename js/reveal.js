@@ -28,4 +28,13 @@
   });
 
   elements.forEach(function(el) { io.observe(el); });
-})();
+
+  // Re-scan when dynamically injected content (e.g. principles via content.js)
+  // is added after the initial page load.
+  document.addEventListener('apexContentReady', function _rebindReveal() {
+    var newEls = document.querySelectorAll('.reveal, .reveal-up, .reveal-left, .reveal-right:not([data-reveal-bound])');
+    newEls.forEach(function(el) {
+      el.classList.add('is-visible');
+    });
+  });
+})(window);
