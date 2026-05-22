@@ -34,6 +34,8 @@
 }
 @media (max-width: 1024px) {
   .layout-feature { grid-template-columns: 1fr; min-height: auto; }
+  .layout-feature .feature-split__media { display: none; }
+  .layout-feature .feature-split__content { padding: var(--space-8) var(--container-pad); }
 }
 
 .layout-feature--reverse {
