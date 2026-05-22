@@ -178,40 +178,12 @@
            </div>
         </div> <!-- Close feature-split -->
 
-         <!-- Steps timeline -->
-         <div class="timeline reveal" style="margin-top: var(--space-8);" aria-label="Apex process steps" id="process-timeline">
-           <div class="timeline__track">
-             <div class="timeline__track-fill"></div>
-           </div>
-           <div class="timeline__step">
-             <div class="timeline__node" aria-hidden="true">1</div>
-             <span class="timeline__label">You Have Cargo</span>
-             <span class="timeline__sub">Tell us what needs to move, where it's coming from, and where it's going.</span>
-           </div>
-           <div class="timeline__step">
-             <div class="timeline__node" aria-hidden="true">2</div>
-             <span class="timeline__label">We Find the Truck</span>
-             <span class="timeline__sub">We match your load to a verified transporter from our network.</span>
-           </div>
-           <div class="timeline__step">
-             <div class="timeline__node" aria-hidden="true">3</div>
-             <span class="timeline__label">Docs &amp; Border Prep</span>
-             <span class="timeline__sub">All documentation and customs processes prepared before the truck
-               arrives.</span>
-           </div>
-           <div class="timeline__step">
-             <div class="timeline__node" aria-hidden="true">4</div>
-             <span class="timeline__label">We Monitor Every KM</span>
-             <span class="timeline__sub">Real‑time involvement throughout the journey. We manage exceptions
-               instantly.</span>
-           </div>
-           <div class="timeline__step">
-             <div class="timeline__node" aria-hidden="true">5</div>
-             <span class="timeline__label">Safe Delivery</span>
-             <span class="timeline__sub">Your cargo arrives on time, with full documentation. No excuses — every load
-               must move.</span>
-           </div>
-         </div>
+          <!-- Steps timeline (populated by content.js buildProcessTimeline) -->
+          <div class="timeline reveal" style="margin-top: var(--space-8);" aria-label="Apex process steps" id="process-timeline">
+            <div class="timeline__track">
+              <div class="timeline__track-fill"></div>
+            </div>
+          </div>
       </div>
     </section>
 
@@ -593,6 +565,7 @@
     <script src="/js/services.js?v=4" defer></script>
      <script src="/js/coverage.js?v=6" defer></script>
     <script src="/js/main.js" defer></script>
+    <script src="/js/counter.js" defer></script>
     <script src="/js/parallax.js" defer></script>
 </body>
 
