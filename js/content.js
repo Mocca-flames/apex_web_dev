@@ -217,26 +217,52 @@
     var steps = get('home.process.steps');
     if (!steps || !steps.length) return;
 
-    var html = '';
+    var html = '<div class="process-timeline-track">';
     steps.forEach(function(step, index) {
-      // Parse "1. You Have Cargo — description"
       var numMatch = step.match(/^(\d+)\.\s*/);
       var number = numMatch ? numMatch[1] : (index + 1);
-      var rest = step.replace(/^\d+\.\s*/, ''); // remove leading number and dot
+      var rest = step.replace(/^\d+\.\s*/, '');
 
       var parts = rest.split(' — ');
       var label = parts[0];
       var body = parts.slice(1).join(' — ');
 
       html +=
-        '<div class="timeline__step">' +
+        '<div class="timeline__step" data-step="' + index + '">' +
           '<div class="timeline__node" aria-hidden="true">' + number + '</div>' +
           '<span class="timeline__label">' + label + '</span>' +
           '<span class="timeline__sub">' + body + '</span>' +
         '</div>';
     });
+    html += '</div>';
 
     container.innerHTML = html;
+
+    var revealed = [];
+    var ticking = false;
+
+    var revealSteps = function() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function() {
+        var steps = container.querySelectorAll('.timeline__step');
+        var viewHeight = window.innerHeight || document.documentElement.clientHeight;
+        steps.forEach(function(step, idx) {
+          if (revealed[idx]) return;
+          var rect = step.getBoundingClientRect();
+          if (rect.top < viewHeight * 0.85 && rect.bottom > 0) {
+            revealed[idx] = true;
+            setTimeout(function() {
+              step.classList.add('is-visible');
+            }, idx * 200);
+          }
+        });
+        ticking = false;
+      });
+    };
+
+    window.addEventListener('scroll', revealSteps, { passive: true });
+    revealSteps();
   }
 
   function buildCoverageSlides() {

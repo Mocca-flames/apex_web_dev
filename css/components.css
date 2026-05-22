@@ -630,9 +630,11 @@
   font-family: 'JetBrains Mono', monospace;
   font-size: clamp(var(--text-4xl), 5vw, var(--text-6xl));
   font-weight: 500;
+  font-variant-numeric: tabular-nums;
   color: var(--apex-navy);
   line-height: 1;
-  display: block;
+  display: inline-block;
+   will-change: contents;
 }
 
 .trust-bar__label {
@@ -1961,5 +1963,131 @@
 
   .coverage-progress {
     display: flex !important;
+  }
+}
+
+/* ── Horizontal Process Timeline ─────────────────────────────── */
+.process-timeline-wrap {
+  position: relative;
+  padding: var(--space-12) 0;
+  display: flex;
+  justify-content: center;
+}
+
+.process-timeline-track {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-8);
+  padding: var(--space-8) var(--space-6);
+  position: relative;
+  justify-content: center;
+}
+
+.process-timeline-track::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--space-8) + 2.25rem);
+  left: var(--space-6);
+  right: var(--space-6);
+  height: 2px;
+  background: linear-gradient(90deg, var(--apex-orange) 0%, rgba(255,255,255,0.2) 100%);
+  opacity: 0.4;
+}
+
+.process-timeline-track .timeline__step {
+  flex: 0 0 auto;
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-4);
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.process-timeline-track .timeline__step.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.process-timeline-track .timeline__node {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--apex-navy);
+  border: 2px solid var(--apex-orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: var(--text-xl);
+  color: var(--apex-orange);
+  position: relative;
+  z-index: 2;
+  transition: background 0.5s ease, transform 0.5s ease;
+}
+
+.process-timeline-track .timeline__step.is-visible .timeline__node {
+  background: var(--apex-orange);
+  color: var(--apex-navy);
+  transform: scale(1.1);
+}
+
+.process-timeline-track .timeline__label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: var(--text-lg);
+  color: var(--apex-white);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+}
+
+.process-timeline-track .timeline__sub {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.75);
+  line-height: 1.5;
+  max-width: 200px;
+}
+
+@media (max-width: 768px) {
+  .process-timeline-wrap {
+    justify-content: flex-start;
+  }
+
+  .process-timeline-track {
+    flex-direction: column;
+    gap: var(--space-6);
+    padding: var(--space-6);
+    justify-content: flex-start;
+    max-width: 100%;
+  }
+
+  .process-timeline-track::before {
+    top: 0;
+    bottom: 0;
+    left: calc(var(--space-6) + 1.5rem);
+    right: auto;
+    width: 2px;
+    height: auto;
+    background: linear-gradient(180deg, var(--apex-orange) 0%, rgba(255,255,255,0.2) 100%);
+  }
+
+  .process-timeline-track .timeline__step {
+    flex-direction: row;
+    width: 100%;
+    text-align: left;
+    gap: var(--space-4);
+  }
+
+  .process-timeline-track .timeline__node {
+    flex-shrink: 0;
+  }
+
+  .process-timeline-track .timeline__sub {
+    max-width: none;
   }
 }

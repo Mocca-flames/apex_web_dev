@@ -178,12 +178,40 @@
            </div>
         </div> <!-- Close feature-split -->
 
-          <!-- Steps timeline (populated by content.js buildProcessTimeline) -->
-          <div class="timeline reveal" style="margin-top: var(--space-8);" aria-label="Apex process steps" id="process-timeline">
-            <div class="timeline__track">
-              <div class="timeline__track-fill"></div>
-            </div>
-          </div>
+         <!-- Steps timeline -->
+         <div class="timeline reveal" style="margin-top: var(--space-8);" aria-label="Apex process steps" id="process-timeline">
+           <div class="timeline__track">
+             <div class="timeline__track-fill"></div>
+           </div>
+           <div class="timeline__step">
+             <div class="timeline__node" aria-hidden="true">1</div>
+             <span class="timeline__label">You Have Cargo</span>
+             <span class="timeline__sub">Tell us what needs to move, where it's coming from, and where it's going.</span>
+           </div>
+           <div class="timeline__step">
+             <div class="timeline__node" aria-hidden="true">2</div>
+             <span class="timeline__label">We Find the Truck</span>
+             <span class="timeline__sub">We match your load to a verified transporter from our network.</span>
+           </div>
+           <div class="timeline__step">
+             <div class="timeline__node" aria-hidden="true">3</div>
+             <span class="timeline__label">Docs &amp; Border Prep</span>
+             <span class="timeline__sub">All documentation and customs processes prepared before the truck
+               arrives.</span>
+           </div>
+           <div class="timeline__step">
+             <div class="timeline__node" aria-hidden="true">4</div>
+             <span class="timeline__label">We Monitor Every KM</span>
+             <span class="timeline__sub">Real‑time involvement throughout the journey. We manage exceptions
+               instantly.</span>
+           </div>
+           <div class="timeline__step">
+             <div class="timeline__node" aria-hidden="true">5</div>
+             <span class="timeline__label">Safe Delivery</span>
+             <span class="timeline__sub">Your cargo arrives on time, with full documentation. No excuses — every load
+               must move.</span>
+           </div>
+         </div>
       </div>
     </section>
 
@@ -433,8 +461,8 @@
              <div class="feature-split__media reveal is-visible" style="background:var(--apex-off-white); min-height:400px;">
               <img src="/webp/cta-image.webp" alt="" class="feature-split__img">
             </div>
-            <div class="feature-split__content"
-             style="background: var(--apex-off-white); display:flex; flex-direction:column; justify-content:center; padding: var(--space-16);">
+            <div class="feature-split__content"></div>
+             
               <div style="margin-bottom: var(--space-4);">
                  <p
                    style="font-size: var(--text-lg); font-weight: 600; color: var(--apex-navy); margin-bottom: var(--space-4);"

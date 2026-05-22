@@ -30,12 +30,30 @@
   grid-template-columns: 62fr 38fr;
   gap: 0;
   align-items: stretch;
-  min-height: 600px; /* Guarantees sufficient height for parallax movement */
+  min-height: 600px;
+  /* Guarantees sufficient height for parallax movement */
 }
+
 @media (max-width: 1024px) {
-  .layout-feature { grid-template-columns: 1fr; min-height: auto; }
-  .layout-feature .feature-split__media { display: none; }
-  .layout-feature .feature-split__content { padding: var(--space-8) var(--container-pad); }
+
+
+  .layout-feature .feature-split__media {
+    display: none;
+  }
+
+  .layout-feature {
+    margin: 0;
+    padding: 0;
+    grid-template-columns: 1fr;
+    flex-wrap: inherit;
+  }
+
+  .feature-split__content {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    width: 100%;
+  }
 }
 
 .layout-feature--reverse {
@@ -46,35 +64,42 @@
 .feature-split__media {
   position: relative;
   overflow: hidden;
-  height: 100%; /* stretch to match grid row height */
-  background: var(--apex-navy); /* Fallback bg while image loads */
+  height: 100%;
+  /* stretch to match grid row height */
+  background: var(--apex-navy);
+  /* Fallback bg while image loads */
 }
 
 /* Feature split image — parallax ready, cover-fill container */
 .feature-split__img {
   width: 100%;
-  height: 115%; /* Extra height to accommodate translate parallax without edges showing */
+  height: 115%;
+  /* Extra height to accommodate translate parallax without edges showing */
   object-fit: cover;
   object-position: center;
   will-change: transform;
-  display: block; /* Remove inline-gap whitespace */
+  display: block;
+  /* Remove inline-gap whitespace */
 }
 
 /* ── Editorial — full-bleed image with floating glass card ─── */
 .layout-editorial {
   position: relative;
 }
+
 .layout-editorial__media {
   width: 100%;
   height: 680px;
   overflow: hidden;
 }
+
 .layout-editorial__img {
   width: 100%;
   height: 115%;
   object-fit: cover;
   will-change: transform;
 }
+
 .layout-editorial__card {
   position: absolute;
   bottom: var(--space-12);
@@ -89,19 +114,33 @@
   gap: var(--space-8);
   align-items: start;
 }
-.layout-stagger > *:nth-child(2) {
+
+.layout-stagger>*:nth-child(2) {
   margin-top: var(--space-10);
 }
-.layout-stagger > *:nth-child(3) {
+
+.layout-stagger>*:nth-child(3) {
   margin-top: var(--space-5);
 }
+
 @media (max-width: 1024px) {
-  .layout-stagger { grid-template-columns: repeat(2, 1fr); }
-  .layout-stagger > *:nth-child(2) { margin-top: 0; }
-  .layout-stagger > *:nth-child(3) { margin-top: 0; }
+  .layout-stagger {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .layout-stagger>*:nth-child(2) {
+    margin-top: 0;
+  }
+
+  .layout-stagger>*:nth-child(3) {
+    margin-top: 0;
+  }
 }
+
 @media (max-width: 640px) {
-  .layout-stagger { grid-template-columns: 1fr; }
+  .layout-stagger {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ── Services Grid — 6 cards, responsive 3×2 → 2×2 → 1×1 (CONTENT.md alignment) ─ */
@@ -110,11 +149,17 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-6);
 }
+
 @media (max-width: 1024px) {
-  .services-grid { grid-template-columns: repeat(2, 1fr); }
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
+
 @media (max-width: 640px) {
-  .services-grid { grid-template-columns: 1fr; }
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ── Commodity Grid — masonry staggered (DESIGN.md §7.5) ───── */
@@ -123,26 +168,33 @@
   grid-template-columns: 2fr 1.5fr 1.5fr;
   gap: var(--space-3);
 }
-.commodity-grid > *:first-child {
+
+.commodity-grid>*:first-child {
   grid-row: span 2;
   min-height: 480px;
 }
-.commodity-grid > *:not(:first-child) {
+
+.commodity-grid>*:not(:first-child) {
   aspect-ratio: 4/3;
 }
+
 @media (max-width: 1024px) {
   .commodity-grid {
     grid-template-columns: 1fr 1fr;
   }
-  .commodity-grid > *:first-child {
+
+  .commodity-grid>*:first-child {
     grid-column: 1 / -1;
     grid-row: span 1;
     min-height: 280px;
     aspect-ratio: 16/7;
   }
 }
+
 @media (max-width: 640px) {
-  .commodity-grid { grid-template-columns: 1fr; }
+  .commodity-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ── Fleet Gallery Grid (5 items — irregular but balanced) ─── */
@@ -151,16 +203,29 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-6);
 }
-.fleet-grid > *:first-child {
+
+.fleet-grid>*:first-child {
   grid-column: span 2;
 }
+
 @media (max-width: 1024px) {
-  .fleet-grid { grid-template-columns: repeat(2, 1fr); }
-  .fleet-grid > *:first-child { grid-column: span 2; }
+  .fleet-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .fleet-grid>*:first-child {
+    grid-column: span 2;
+  }
 }
+
 @media (max-width: 640px) {
-  .fleet-grid { grid-template-columns: 1fr; }
-  .fleet-grid > *:first-child { grid-column: span 1; }
+  .fleet-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fleet-grid>*:first-child {
+    grid-column: span 1;
+  }
 }
 
 /* ── Trust Bar — 3 equal cols with divider lines ───────────── */
@@ -171,12 +236,16 @@
   margin: 0;
   padding: 0;
 }
+
 .trust-bar__item {
   padding: var(--space-8) var(--space-10);
   text-align: center;
   border-right: 1px solid var(--apex-stone);
 }
-.trust-bar__item:last-child { border-right: none; }
+
+.trust-bar__item:last-child {
+  border-right: none;
+}
 
 /* ── Trust Bar Mobile (≤640px) ─────────────────────────────── */
 @media (max-width: 640px) {
@@ -184,6 +253,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-2);
   }
+
   .trust-bar__item {
     padding: var(--space-4) var(--space-2);
     border-right: none;
