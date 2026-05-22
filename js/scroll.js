@@ -1,6 +1,6 @@
 // scroll.js — Lenis smooth-scroll singleton
 // Loaded on demand by modules that depend on smooth scroll
-// Initialized only on desktop, non-reduced-motion, tier-2
+// Initialized on desktop and mobile (tier-2, touch-capable, no reduced-motion)
 
 (function() {
   let lenisInstance = null;
@@ -15,14 +15,16 @@
       return null;
     }
 
+    var isMobile = window.matchMedia('(max-width: 1024px)').matches;
+
     var lenis = new Lenis({
-      duration: 0.8,
+      duration: isMobile ? 0.4 : 0.8,
       easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
       orientation: 'vertical',
       smoothWheel: false,
-      smoothTouch: false,
-      touchMultiplier: 2,
-      lerp: 0.1
+      smoothTouch: isMobile ? true : false,
+      touchMultiplier: isMobile ? 2.8 : 2,
+      lerp: isMobile ? 0.05 : 0.1
     });
 
     function raf(time) {
@@ -50,10 +52,18 @@
 
   function tryInitLenis() {
     var html = document.documentElement;
+    /* Lenis is now enabled for mobile too, but only when:
+       - tier-2 class is present (not tier-1)
+       - device supports touch (not touch-only tablet in desktop mode)
+       - no reduced-motion preference */
     var shouldEnable = (
       html.classList.contains('tier-2') &&
-      window.innerWidth >= 1024 &&
       window.matchMedia('(hover: hover)').matches &&
+      window.matchMedia('(prefers-reduced-motion: no-preference)').matches
+    ) || (
+      html.classList.contains('tier-2') &&
+      window.matchMedia('(max-width: 1024px)').matches &&
+      window.matchMedia('(pointer: coarse)').matches &&
       window.matchMedia('(prefers-reduced-motion: no-preference)').matches
     );
 

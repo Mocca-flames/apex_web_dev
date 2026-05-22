@@ -93,8 +93,13 @@
 
       setStickyVisible(false);
 
-      var rect      = track.getBoundingClientRect();
-      var trackSpan = rect.height - (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+      var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      /* On mobile, getBoundingClientRect().height can lag behind the CSS-computed
+         track height (100svh) when the browser address bar expands/collapses.
+         Use track.offsetHeight which is always in sync with the CSS layout. */
+      var trackHeight = track.offsetHeight;
+      var rect = track.getBoundingClientRect();
+      var trackSpan = trackHeight - vh;
 
       if (trackSpan <= 0) return;
 
@@ -141,13 +146,14 @@
       (function observeTrack() {
         var io = new IntersectionObserver(function (entries) {
           entries.forEach(function (entry) {
-            if (!entry.isIntersecting || entry.boundingClientRect.height <= 0) {
+            if (!entry.isIntersecting) {
               setStickyVisible(false);
               return;
             }
-            var topIO    = entry.boundingClientRect.top;
-            var heightIO = entry.boundingClientRect.height;
-            var spanIO   = heightIO - (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+            var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+            var trackHeight = track.offsetHeight;
+            var topIO = entry.boundingClientRect.top;
+            var spanIO = trackHeight - vh;
             if (spanIO <= 0) { setStickyVisible(false); return; }
             var p = -topIO / spanIO;
             if (p < 0 || p > 1) { setStickyVisible(false); return; }
@@ -168,6 +174,18 @@
     } else {
       /* Mobile and reduced-motion fallback: native scroll event */
       window.addEventListener('scroll', onScroll, { passive: true });
+    }
+
+    /* ── Mobile address bar handling ─────────────────────────────────
+     * Chrome on Android expands/collapses its address bar on scroll,
+     * causing window.visualViewport.height to change dynamically.
+     * This breaks scroll-jacking because the track height (CSS 100svh)
+     * stays fixed but vh changes. We listen to visualViewport resize
+     * to recalculate correctly when the bar state changes. */
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', function() {
+        onScroll();
+      });
     }
 
     /* ── Keyboard: arrow keys jump between slides when sticky is shown ── */

@@ -25,15 +25,18 @@
    */
   function fetchContent() {
     const url = isMobile() ? CONTENT_MOBILE : CONTENT_DESKTOP;
+    console.log('[content] fetchContent starting', { url: url, isMobile: isMobile() });
 
     return fetch(url, { credentials: 'same-origin' })
       .then(function(response) {
+        console.log('[content] fetch response', { ok: response.ok, status: response.status, url: response.url });
         if (!response.ok) {
           throw new Error('Content fetch failed: ' + response.status);
         }
         return response.json();
       })
       .then(function(data) {
+        console.log('[content] fetchContent loaded', { hasData: !!data, keys: data ? Object.keys(data).join(', ') : 'none' });
         apexContent = data;
         return data;
       })
@@ -285,9 +288,22 @@
 
   function buildPrinciples() {
     var container = document.getElementById('principles-container');
-    if (!container) return;
+    var home = get('home');
+    var values = get('home.values');
     var principles = get('home.values.principles');
-    if (!principles || !principles.length) return;
+    console.log('[content] buildPrinciples', {
+      containerFound: !!container,
+      apexContentLoaded: !!apexContent,
+      homeKeys: apexContent && apexContent.home ? Object.keys(apexContent.home).join(', ') : 'none',
+      homeObj: home,
+      valuesObj: values,
+      principles: principles
+    });
+    if (!container) return;
+    if (!principles || !principles.length) {
+      console.warn('[content] buildPrinciples: no principles data');
+      return;
+    }
 
     var icons = [
       '<circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle>',
@@ -630,11 +646,19 @@
   document.addEventListener('nav:injected', function _retryBuild() {
     if (_navInjectedDone) return;
     _navInjectedDone = true;
-    buildAll();
+    // Only run if content is already loaded; otherwise wait for fetchContent
+    if (apexContent) {
+      buildAll();
+    }
   });
 
   // Start loading content immediately
   var contentPromise = fetchContent().then(function(data) {
+    console.log('[content] fetchContent promise resolved', {
+      dataLoaded: !!data,
+      dataKeys: data ? Object.keys(data).join(', ') : 'none',
+      apexContentNow: !!apexContent
+    });
     if (data) {
       buildAll();
     } else {
@@ -642,5 +666,10 @@
     }
   });
   window.apexContentReady = contentPromise;
+
+  // Deferred to next tick so deferred scripts (e.g. reveal.js) register listeners before the event fires
+  setTimeout(function() {
+    document.dispatchEvent(new Event('apexContentReady'));
+  }, 0);
 
 })();

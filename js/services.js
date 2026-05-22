@@ -5,6 +5,7 @@
 
 (function() {
   var SERVICE_COUNT = 6;
+  var _bootGuard = true;   /* discard the very first onScroll call (page-load race) */
 
   function initServices() {
     var track    = document.getElementById('services');
@@ -20,8 +21,15 @@
       fill: !!fill, dotsWrap: !!dotsWrap, lenis: !!lenis,
        viewportW: window.innerWidth, viewportH: window.visualViewport ? window.visualViewport.height : window.innerHeight,
      });
-     if (!track) { console.error('[services] ABORT: #services track element not found'); return; }
-     if (!panels.length) { console.error('[services] ABORT: no .services-panel elements found'); return; }
+      if (!track) { console.error('[services] ABORT: #services track element not found'); return; }
+
+    /* ── Late-DOM guard: if panels/images aren't ready at init time
+     *  we don't abort — we schedule flushCheck retries via setTimeout
+     *  and a MutationObserver so the section recovers as soon as
+     *  content.js calls buildAll() and renders the panels. ────────── */
+    if (!panels.length) {
+      console.warn('[services] .services-panel not found at init — scheduling flushCheck retries');
+    }
 
     /* ── Visibility helper ────────────────────────────────────────────
      * setStickyVisible() is the single source of truth for show/hide.
@@ -30,48 +38,13 @@
      * - inert removes the panel from tab order and the a11y tree when
      *   hidden so keyboard/screen-reader users can't land inside it.
      * ─────────────────────────────────────────────────────────────── */
-    var _stickyVisible = false;
     function setStickyVisible(visible) {
       if (!sticky) return;
-      if (_stickyVisible === visible) return; // no-op guard — prevents spam
-      _stickyVisible = visible;
-
       sticky.classList.toggle('is-visible', visible);
       if (visible) {
         sticky.removeAttribute('inert');
       } else {
         sticky.setAttribute('inert', '');
-      }
-
-      /* ── Clear stale inline styles set by a previous visible=true call.
-          Without this, opacity:1 !important left over from the prior call
-          beats the CSS transition (opacity 1 → 0), so opacity stays at 1
-          forever and scroll events keep firing the "STILL" warning. */
-      sticky.style.removeProperty('opacity');
-      sticky.style.removeProperty('pointer-events');
-
-      /* CRITICAL FIX: Reflow before reading computed style.
-         Without this, getComputedStyle() can return a stale value cached
-         before the class toggle was painted. */
-      void sticky.offsetWidth;
-
-      var afterOpacity = getComputedStyle(sticky).opacity;
-      console.log('[services] setStickyVisible', {
-        visible: visible,
-        now_is_visible: sticky.classList.contains('is-visible'),
-        now_inert: sticky.hasAttribute('inert'),
-        now_opacity: afterOpacity,
-      });
-
-      /* FIX: If opacity is still 0 after toggle+reflow, force inline override.
-         This covers the narrow window where a CSS transition is mid-flight
-         or a layout rebuild had reset opacity between toggle and read.
-         The guard below only fires on the →true path (the →false path
-         intentionally lets the CSS transition 1 → 0 play out normally). */
-      if (visible && parseFloat(afterOpacity) < 0.99) {
-        console.warn('[services] setStickyVisible: opacity STILL', afterOpacity,
-          '— forcing inline opacity:1 + pointer-events:auto');
-        sticky.style.cssText = 'opacity:1 !important; pointer-events:auto !important;';
       }
     }
 
@@ -169,63 +142,32 @@
     }
 
     function onScroll() {
-      /* FIX: Force reflow before measuring, so layout re-computes in
-         case the DOM was rebuilt by buildAll/nav:injected after init. */
-      void sticky.offsetWidth;
-      void track.offsetHeight;
+      /* The very first call fires during page-load (coverage.js performs
+         an init scroll to its section), before layout is stable.
+         Guard: drop the first call unconditionally so the sticky never
+         shows while the page is still assembling. */
+      if (_bootGuard) { _bootGuard = false; return; }
+
+      setStickyVisible(false);
 
       var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-      var rect      = track.getBoundingClientRect();
-      var trackSpan = rect.height - vh;
+      /* On mobile, getBoundingClientRect().height can lag behind the CSS-computed
+         track height (100svh) when the browser address bar expands/collapses.
+         Use track.offsetHeight which is always in sync with the CSS layout. */
+      var trackHeight = track.offsetHeight;
+      var rect = track.getBoundingClientRect();
+      var trackSpan = trackHeight - vh;
 
-      console.log('[services onScroll]', {
-        rectTop:      rect.top.toFixed(1),
-        rectHeight:   rect.height.toFixed(1),
-        innerHeight:   vh,
-        trackSpan:    trackSpan.toFixed(1),
-        notEnoughScrollSpace: trackSpan <= 0,
-      });
-
-      if (trackSpan <= 0) {
-        /* FIX: Section may have been rebuilt after init — try again
-           after a short debounce, so we don't permanently miss the
-           section on a rebuilding page. */
-        setTimeout(function() {
-          var freshRect = track.getBoundingClientRect();
-          var freshSpan = freshRect.height - vh;
-          if (freshSpan > 0) {
-            console.warn('[services] recalibrated: trackSpan was 0, now', freshSpan.toFixed(1));
-            onScroll();
-          }
-        }, 100);
-        return;
-      }
+      if (trackSpan <= 0) return;
 
       var progress = -rect.top / trackSpan;
-      console.log('[services onScroll] progress', progress.toFixed(4), {
-        outOfRange:  progress < 0 || progress > 1,
-      });
+      if (progress < 0 || progress > 1) return;
 
-      if (progress < 0 || progress > 1) {
-        /* §Guard: skip repeated out-of-range calls that don't change anything.
-           Without this, laminar scroll (e.g. Lenis or a fast-touch trackpad)
-           can fire onScroll hundreds of times per frame while the section is
-           far off-screen, spamming setStickyVisible(false) and clogging the
-           console with useless "progress 3.41 → outOfRange: true" lines. */
-        if (!_stickyVisible) return;
-        setStickyVisible(false);
-        return;
-      }
-
-      if (_stickyVisible) return; // already in-view — only activate once
       setStickyVisible(true);
 
       var seg = 1 / SERVICE_COUNT;
       var idx = Math.min(Math.floor(progress / seg), SERVICE_COUNT - 1);
-      console.log('[services onScroll] seg', seg.toFixed(4), '→ idx', idx);
-
       if (fill) fill.style.height = ((idx / (SERVICE_COUNT - 1)) * 100) + '%';
-
       activateService(idx);
     }
 
@@ -239,8 +181,67 @@
       window.addEventListener('scroll', onScroll, { passive: true });
     }
 
+    /* ── Mobile address bar handling ─────────────────────────────────
+     * Chrome on Android expands/collapses its address bar on scroll,
+     * causing window.visualViewport.height to change dynamically.
+     * This breaks scroll-jacking because the track height (CSS 100svh)
+     * stays fixed but vh changes. We listen to visualViewport resize
+     * to recalculate correctly when the bar state changes. */
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', function() {
+        onScroll();
+      });
+    }
+
+    // ── Re-hide sticky and re-check after services DOM is mutated ────────
+    //  buildServicesPanels() (content.js) rebuilds .services-panel elements
+    //  via innerHTML after initServices() may have already exited with stale
+    //  or absent panels. The observer re-queries the DOM after every mutation
+    //  so the section recovers regardless of build order. ──────────────────
+    var mo = new MutationObserver(function () {
+      var livePanels = document.querySelectorAll('.services-panel');
+      var liveImages = document.querySelectorAll('.services-image');
+      if (!livePanels.length) return;
+      panels = livePanels;
+      images = liveImages;
+      setStickyVisible(false);
+      onScroll();
+    });
+    mo.observe(track, { childList: true, subtree: true });
+
+    /* ── IntersectionObserver ─────────────────────────────────────── */
+    if ('IntersectionObserver' in window) {
+      (function observeTrack() {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+              setStickyVisible(false);
+              return;
+            }
+            var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+            var trackHeight = track.offsetHeight;
+            var topIO = entry.boundingClientRect.top;
+            var spanIO = trackHeight - vh;
+            if (spanIO <= 0) { setStickyVisible(false); return; }
+            var p = -topIO / spanIO;
+            if (p < 0 || p > 1) { setStickyVisible(false); return; }
+            setStickyVisible(true);
+            var seg = 1 / SERVICE_COUNT;
+            var idx = Math.min(Math.floor(p / seg), SERVICE_COUNT - 1);
+            if (fill) fill.style.height = ((idx / (SERVICE_COUNT - 1)) * 100) + '%';
+            activateService(idx);
+          });
+        }, { rootMargin: '0px 0px -1px 0px' });
+
+        io.observe(track);
+      })();
+    }
+
+    /* tabindex stays — inert overrides it when the panel is hidden */
+    sticky.setAttribute('tabindex', '0');
+
     // ── Keyboard: arrow keys ──────────────────────────────────
-    track.addEventListener('keydown', function(e) {
+    sticky.addEventListener('keydown', function(e) {
       if (e.key === 'ArrowDown' && currentIndex < SERVICE_COUNT - 1) {
         e.preventDefault();
         var dots = dotsWrap ? dotsWrap.querySelectorAll('.services-progress__dot') : [];
