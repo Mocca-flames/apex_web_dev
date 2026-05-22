@@ -25,7 +25,7 @@
 
   var SLIDE_COUNT = 8;
 
-  var _bootGuard = true;   /* discard the very first onScroll call (page-load race) */
+  var _bootGuard = !('ontouchstart' in window);   /* discard the very first onScroll call (page-load race) */
 
   function initCoverage() {
     var section = document.getElementById('coverage');

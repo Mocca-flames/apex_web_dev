@@ -2,7 +2,7 @@
 // Loaded on demand by modules that depend on smooth scroll
 // Initialized on desktop and mobile (tier-2, touch-capable, no reduced-motion)
 
-(function() {
+(function () {
   let lenisInstance = null;
 
   function getLenis() {
@@ -19,12 +19,15 @@
 
     var lenis = new Lenis({
       duration: isMobile ? 0.4 : 0.8,
-      easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+      easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
       orientation: 'vertical',
       smoothWheel: false,
-      smoothTouch: isMobile ? true : false,
-      touchMultiplier: isMobile ? 2.8 : 2,
-      lerp: isMobile ? 0.05 : 0.1
+      smoothTouch: false,           // ← was: isMobile ? true : false
+      //   With true, Lenis eats native momentum.
+      //   With false, browser handles the swipe;
+      //   Lenis just observes + fires scroll events.
+      touchMultiplier: isMobile ? 2.2 : 2,
+      lerp: isMobile ? 0.12 : 0.1
     });
 
     function raf(time) {
@@ -41,10 +44,10 @@
     lenisInstance = lenis;
     window.lenisInstance = lenis;
 
-    lenis.on('scroll', function({ scroll, limit, velocity, progress }) {
-      document.documentElement.style.setProperty('--scroll-y',    scroll);
+    lenis.on('scroll', function ({ scroll, limit, velocity, progress }) {
+      document.documentElement.style.setProperty('--scroll-y', scroll);
       document.documentElement.style.setProperty('--scroll-prog', progress.toFixed(4));
-      document.documentElement.style.setProperty('--scroll-vel',  Math.abs(velocity).toFixed(3));
+      document.documentElement.style.setProperty('--scroll-vel', Math.abs(velocity).toFixed(3));
     });
 
     return lenis;
@@ -61,22 +64,22 @@
       window.matchMedia('(hover: hover)').matches &&
       window.matchMedia('(prefers-reduced-motion: no-preference)').matches
     ) || (
-      html.classList.contains('tier-2') &&
-      window.matchMedia('(max-width: 1024px)').matches &&
-      window.matchMedia('(pointer: coarse)').matches &&
-      window.matchMedia('(prefers-reduced-motion: no-preference)').matches
-    );
+        html.classList.contains('tier-2') &&
+        window.matchMedia('(max-width: 1024px)').matches &&
+        window.matchMedia('(pointer: coarse)').matches &&
+        window.matchMedia('(prefers-reduced-motion: no-preference)').matches
+      );
 
     if (!shouldEnable) return Promise.resolve(null);
 
-    return new Promise(function(resolve) {
+    return new Promise(function (resolve) {
       if (window.Lenis) return resolve(initLenis());
 
       var script = document.createElement('script');
       script.src = 'https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js';
       script.crossOrigin = 'anonymous';
       script.async = true;
-      script.onload = function() {
+      script.onload = function () {
         if (window.Lenis) {
           resolve(initLenis());
         } else {
@@ -84,7 +87,7 @@
           resolve(null);
         }
       };
-      script.onerror = function() {
+      script.onerror = function () {
         console.error('Failed to load Lenis from CDN');
         resolve(null);
       };
